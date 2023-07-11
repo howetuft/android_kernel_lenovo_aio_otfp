@@ -233,6 +233,10 @@ extern LCM_DRIVER cpt_clap070wp03xg_wxga_lvds_lcm_drv;
 extern LCM_DRIVER otm1902a_fhd_dsi_cmd_tianma_lcm_drv;
 extern LCM_DRIVER nt35695_fhd_dsi_cmd_yassy_lcm_drv;
 //lenovo-sw wangyq13 add 20151012 end
+//lenovo A10-70F
+extern LCM_DRIVER nt51021_fhd_dsi_vdo_auo_lcm_drv;
+//~lenovo A10-70F
+
 
 #ifdef BUILD_LK
 extern void mdelay(unsigned long msec);

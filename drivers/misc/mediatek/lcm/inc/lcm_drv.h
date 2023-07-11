@@ -12,6 +12,15 @@
 
 /* common enumerations */
 
+/* CABC Start */
+typedef enum {
+	CABC_OFF	= 0,
+	CABC_MOVIE	= 1,
+	CABC_STILL	= 2,
+	CABC_UI		= 3
+} E_CABC_MODE;
+/* CABC end */
+
 typedef enum {
 	LCM_TYPE_DBI = 0,
 	LCM_TYPE_DPI,
