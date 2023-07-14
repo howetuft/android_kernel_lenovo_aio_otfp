@@ -2555,9 +2555,12 @@ static int tpd_local_init(void)
 #endif
 
 #if GTP_SUPPORT_I2C_DMA
-	gpDMABuf_va =
-	    (u8 *) dma_alloc_coherent(NULL, GTP_DMA_MAX_TRANSACTION_LENGTH, &gpDMABuf_pa,
-				      GFP_KERNEL);
+        tpd->dev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
+        gpDMABuf_va = (u8 *)dma_alloc_coherent(&tpd->dev->dev, GTP_DMA_MAX_TRANSACTION_LENGTH, &gpDMABuf_pa, GFP_KERNEL);
+        /* howetuft 2023 */
+	/*gpDMABuf_va =*/
+	    /*(u8 *) dma_alloc_coherent(NULL, GTP_DMA_MAX_TRANSACTION_LENGTH, &gpDMABuf_pa,*/
+				      /*GFP_KERNEL);*/
 	if (!gpDMABuf_va) {
 		GTP_INFO("[Error] Allocate DMA I2C Buffer failed!\n");
 	}
