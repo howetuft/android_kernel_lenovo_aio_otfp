@@ -12,3 +12,5 @@ obj-$(CONFIG_MTK_CM366XX)	+=  cm366xx/
 ifeq ($(CONFIG_MTK_EPL21822_AIO),y)
 obj-y	+=  EPL21822-aio/
 endif
+
+obj-$(CONFIG_MTK_CM3232_NEW)	+=  cm3232-new/
