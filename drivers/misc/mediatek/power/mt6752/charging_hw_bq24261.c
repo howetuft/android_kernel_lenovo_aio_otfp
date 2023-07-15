@@ -204,7 +204,7 @@ kal_uint32 charging_parameter_to_value(const kal_uint32 *parameter, const kal_ui
 		}
 	}
 
-	battery_log(BAT_LOG_CRTI, "NO register value match \r\n");
+	battery_log(BAT_LOG_CRTI, "NO register value match (val=%i)\r\n", val);
 	/* TODO: ASSERT(0); */ /* not find the value */
 	return 0;
 }
@@ -228,7 +228,7 @@ static kal_uint32 bmt_find_closest_level(const kal_uint32 *pList, kal_uint32 num
 			}
 		}
 
-		battery_log(BAT_LOG_CRTI, "Can't find closest level \r\n");
+		battery_log(BAT_LOG_CRTI, "Can't find closest level (level=%i)\r\n", level);
 		return pList[0];
 		/* return CHARGE_CURRENT_0_00_MA; */
 	} else {
@@ -238,7 +238,7 @@ static kal_uint32 bmt_find_closest_level(const kal_uint32 *pList, kal_uint32 num
 			}
 		}
 
-		battery_log(BAT_LOG_CRTI, "Can't find closest level \r\n");
+		battery_log(BAT_LOG_CRTI, "Can't find closest level (level=%i)\r\n", level);
 		return pList[number - 1];
 		/* return CHARGE_CURRENT_0_00_MA; */
 	}
