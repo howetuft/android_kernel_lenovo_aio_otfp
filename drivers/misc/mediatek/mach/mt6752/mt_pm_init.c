@@ -583,7 +583,7 @@ static int __init mt_power_management_init(void)
 
 
     pm_init_dir = proc_mkdir("pm_init", NULL);
-    pm_init_dir = proc_mkdir("pm_init", NULL);
+    /*pm_init_dir = proc_mkdir("pm_init", NULL);*/ // Duplicate?
     if (!pm_init_dir)
     {
         pr_err("[%s]: mkdir /proc/pm_init failed\n", __FUNCTION__);
