@@ -1,0 +1,120 @@
+/dts-v1/;
+
+/include/ "mt6752.dtsi"
+
+/ {
+
+/*	chosen {
+		bootargs = "console=tty0 console=ttyMT1,921600n1 root=/dev/ram initrd=0x44000000,0x200000 loglevel=8";
+	};
+*/
+
+	memory@00000000 {
+		device_type = "memory";
+		reg = <0 0x40000000 0 0xFA00000>;
+	};
+
+/*	memory@00000000 {
+		device_type = "memory";
+		reg = <0x00 0x40000000 0x00 0x80000000>;
+	};
+*/
+
+	/*bus {
+		compatible = "simple-bus";
+		#address-cells = <0x01>;
+		#size-cells = <0x01>;
+		ranges = <0x00 0x00 0x00 0xffffffff>;
+
+		I2C0@0x11007000 {
+
+			compatible = "mediatek,I2C0";
+			cell-index = <0x00>;
+			reg = <0x11007000 0x1000>;
+			#address-cells = <0x01>;
+			#size-cells = <0x00>;
+			interrupts = <0x00 0x54 0x08>;
+
+			gt9xx@5d {
+				compatible = "gt9xx";
+				reg = <0x5d>;
+			};
+
+			mt6306@64 {
+				compatible = "mediatek,mt6306";
+				reg = <0x64>;
+			};
+
+
+			bq24296@6b {
+				compatible = "bq24296";
+				reg = <0x6b>;
+			};
+
+			tps6128x@75 {
+				compatible = "tps6128x";
+				reg = <0x75>;
+			};
+		};
+
+		I2C1@0x11008000 {
+			KXTJ2_1009@0e {
+				compatible = "KXTJ2_1009";
+				reg = <0x0e>;
+			};
+
+			BMA222@18 {
+				compatible = "BMA222";
+				reg = <0x18>;
+			};
+
+			mt6605@28 {
+				compatible = "mt6605";
+				reg = <0x28>;
+			};
+
+
+			yas533@2e {
+				compatible = "yas533";
+				reg = <0x2e>;
+			};
+
+			couloMeter@55 {
+				compatible = "couloMeter";
+				reg = <0x55>;
+			};
+
+			mpu-6515@68 {
+				compatible = "mpu-6515";
+				reg = <0x68>;
+			};
+
+			bmp180@77 {
+				compatible = "bmp180";
+				reg = <0x77>;
+			};
+
+		};
+
+		I2C2@0x11009000 {
+			DW9718AF@18 {
+				compatible = "DW9718AF";
+				reg = <0x18>;
+			};
+
+			kd_camera_hw@7f {
+				compatible = "kd_camera_hw";
+				reg = <0x7f>;
+			};
+
+		};
+          }; */
+
+          TOUCH@0 {
+              compatible = "mediatek,TPD";
+              eint-gpio = <139 0>;
+              rst-gpio = <144 0>;
+          };
+
+};
+
