@@ -1197,7 +1197,7 @@ void mt_dcm_emi_1pll_mode(void)
         dcm_set_state(EMI_DCM_TYPE, EMI_DCM_1PLL_MODE);
 }
 
-void mt_dcm_emi_off(void)
+void mt_dcm_emi_off_mode(void)
 {
         mt_dcm_init();
 
@@ -1211,13 +1211,13 @@ void mt_dcm_emi_3pll_mode(void)
         dcm_set_state(EMI_DCM_TYPE, EMI_DCM_3PLL_MODE);
 }
 
-void mt_dcm_disable(void)
+void mt_dcm_emi_disable(void)
 {
         mt_dcm_init();
-        dcm_disable(ALL_DCM_TYPE);        
+        dcm_disable(ALL_DCM_TYPE);
 }
 
-void mt_dcm_restore(void)
+void mt_dcm_emi_restore(void)
 {
         mt_dcm_init();
         dcm_restore(ALL_DCM_TYPE);        
