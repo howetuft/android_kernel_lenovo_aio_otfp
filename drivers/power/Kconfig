@@ -14,6 +14,13 @@ config POWER_SUPPLY_DEBUG
 	  Say Y here to enable debugging messages for power supply class
 	  and drivers.
 
+config COULO_METER
+	tristate "COULO_METER Battery"
+	depends on I2C
+	help
+	  Say Y to include support for Battery COULO_METER.
+	  COULO_METER is a meter of battery.
+
 config PDA_POWER
 	tristate "Generic PDA/phone power driver"
 	depends on !S390
