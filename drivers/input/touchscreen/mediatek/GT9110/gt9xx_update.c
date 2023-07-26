@@ -34,6 +34,7 @@
 
 #define GUP_FW_INFO
 #include "tpd_custom_gt9xx.h"
+#include "gt9xx_firmware.h"
 
 #define GUP_REG_HW_INFO             0x4220
 #define GUP_REG_FW_MSG              0x41E4

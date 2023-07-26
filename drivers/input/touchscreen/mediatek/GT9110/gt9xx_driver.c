@@ -1,6 +1,7 @@
 #include "tpd.h"
 #define GUP_FW_INFO
 #include "tpd_custom_gt9xx.h"
+#include "gt9xx_firmware.h"
 
 #include "cust_gpio_usage.h"
 
@@ -19,7 +20,7 @@ extern int tpd_v_magnify_x;
 extern int tpd_v_magnify_y;
 #endif
 static int tpd_flag = 0;
-static int tpd_halt = 0;
+int tpd_halt = 0;
 static int tpd_eint_mode=1;
 static int tpd_polling_time=50;
 static DECLARE_WAIT_QUEUE_HEAD(waiter);
@@ -77,10 +78,13 @@ static u8 gtp_charger_mode = 0;
 #endif
 
 #if GTP_ESD_PROTECT
+static int clk_tick_cnt = 200;
 #define TPD_ESD_CHECK_CIRCLE        2000
 static struct delayed_work gtp_esd_check_work;
 static struct workqueue_struct *gtp_esd_check_workqueue = NULL;
 static void gtp_esd_check_func(struct work_struct *);
+u8 esd_running = 0;
+spinlock_t esd_lock;
 #endif
 
 #ifdef TPD_PROXIMITY
@@ -901,7 +905,7 @@ Note:
   If the INT is high, It means there is pull up resistor attached on the INT pin.
   Pull low the INT pin manaully for FW sync.
 *******************************************************/
-void gtp_int_sync()
+void gtp_int_sync(void)
 {
     GTP_DEBUG("There is pull up resisitor attached on the INT pin~!");
     GTP_GPIO_OUTPUT(GTP_INT_PORT, 0);
@@ -1184,7 +1188,7 @@ static int tpd_i2c_remove(struct i2c_client *client)
     destroy_workqueue(gtp_esd_check_workqueue);
 #endif
 
-#if GTP_ESD_PROTECT
+#if GTP_ESD_PROTECT && GTP_CHARGER_DETECT
     destroy_workqueue(gtp_charger_check_workqueue);
 #endif
     return 0;
@@ -1259,6 +1263,40 @@ static void force_reset_guitar(void)
     }
 
 }
+
+void gtp_esd_switch(struct i2c_client *client, s32 on)
+{
+    spin_lock(&esd_lock);     
+    if (SWITCH_ON == on)     // switch on esd 
+    {
+        if (!esd_running)
+        {
+            esd_running = 1;
+            spin_unlock(&esd_lock);
+            GTP_INFO("Esd started");
+            queue_delayed_work(gtp_esd_check_workqueue, &gtp_esd_check_work, clk_tick_cnt);
+        }
+        else
+        {
+            spin_unlock(&esd_lock);
+        }
+    }
+    else    // switch off esd
+    {
+        if (esd_running)
+        {
+            esd_running = 0;
+            spin_unlock(&esd_lock);
+            GTP_INFO("Esd cancelled");
+                       cancel_delayed_work(&gtp_esd_check_work);
+        }
+        else
+        {
+            spin_unlock(&esd_lock);
+        }
+    }
+}
+// Howetuft
 
 static void gtp_esd_check_func(struct work_struct *work)
 {

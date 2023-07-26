@@ -502,6 +502,10 @@ config MTK_GT9XX
         bool "GT9XX for Mediatek package"
         default n
         
+config MTK_GT9110
+        bool "GT9110 for Mediatek package"
+        default n
+
 config GT9XX_2
         bool "GT9XX for Mediatek package"
         default n
