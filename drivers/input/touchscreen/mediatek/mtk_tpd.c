@@ -578,7 +578,7 @@ static int tpd_probe(struct platform_device *pdev)
 	set_bit(ABS_X, tpd->dev->absbit);
 	set_bit(ABS_Y, tpd->dev->absbit);
 	set_bit(ABS_PRESSURE, tpd->dev->absbit);
-#if !defined(CONFIG_MTK_S3320) && !defined(CONFIG_MTK_S3320_47) && !defined(CONFIG_MTK_S3320_50) && !defined(CONFIG_MTK_MIT200) && !defined(CONFIG_TOUCHSCREEN_SYNAPTICS_S3528) && !defined(CONFIG_MTK_S7020)
+#ifdef TPD_HAVE_BUTTON
 	set_bit(BTN_TOUCH, tpd->dev->keybit);
 #endif /* CONFIG_MTK_S3320 */
 	set_bit(INPUT_PROP_DIRECT, tpd->dev->propbit);
