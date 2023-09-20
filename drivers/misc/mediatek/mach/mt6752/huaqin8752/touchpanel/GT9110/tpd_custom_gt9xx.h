@@ -127,9 +127,9 @@ extern unsigned char gtp_default_FW_fl[];
 //#define TPD_WARP_X
 //#define TPD_WARP_Y
 
-#define GTP_DEBUG_ON          0
-#define GTP_DEBUG_ARRAY_ON    0
-#define GTP_DEBUG_FUNC_ON     0
+#define GTP_DEBUG_ON          1
+#define GTP_DEBUG_ARRAY_ON    1
+#define GTP_DEBUG_FUNC_ON     1
 
 #define CFG_GROUP_LEN(p_cfg_grp)  (sizeof(p_cfg_grp) / sizeof(p_cfg_grp[0]))
 #define FLASHLESS_FLASH_WORKROUND  0
