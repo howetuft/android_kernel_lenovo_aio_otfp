@@ -36,5 +36,7 @@ DCT_EXTRA_PATH := $(objtree)/drivers/misc/mediatek/mach/$(MTK_PLATFORM)/$(ARCH_M
 else
 DCT_EXTRA_PATH := $(objtree)/arch/arm/mach-$(MTK_PLATFORM)/$(ARCH_MTK_PROJECT)/dct/dct/
 endif
+DCT_EXTRA_PATH2 := $(objtree)/arch/arm64/boot/dts/include
 
 DTC_FLAGS ?= -i $(DCT_EXTRA_PATH)
+DCT_FLAGS += -i $(DCT_EXTRA_PATH2)
