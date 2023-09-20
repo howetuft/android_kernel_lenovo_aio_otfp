@@ -14,7 +14,7 @@
 #define _GT9XX_FIRMWARE_H_
 
 #if GTP_HEADER_FW_UPDATE
-static unsigned char gtp_default_FW[] = 
+unsigned char gtp_default_FW[] = 
 {
 };
 #endif
