@@ -2,6 +2,7 @@
 #define __HAL_BTIF_DMA_H_
 
 #include <asm/io.h>
+#include "mach/mt_clkmgr.h"
 #include "hal_btif_dma_pub.h"
 
 #define MTK_BTIF_APDMA_CLK_CG MT_CG_INFRA_APDMA

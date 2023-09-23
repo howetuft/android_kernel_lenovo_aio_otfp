@@ -1,6 +1,7 @@
 
 #include <ssw.h>
 #include <mach/mt_ccci_common.h>
+#include "mach/mt_gpio.h"
 #include "cust_gpio_usage.h"
 /*--------------Feature option---------------*/
 #define __ENABLE_SSW_SYSFS 1

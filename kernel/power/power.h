@@ -183,7 +183,7 @@ extern void swsusp_show_speed(struct timeval *, struct timeval *,
 
 #ifdef CONFIG_SUSPEND
 /* kernel/power/suspend.c */
-#ifdef CONFIG_EARLYSUSPEND
+#ifdef CONFIG_EARLYSUSPEND_LEGACY
 struct pm_sleep_state {
 	const char *label;
 	suspend_state_t state;
@@ -391,7 +391,7 @@ static inline suspend_state_t pm_autosleep_state(void) { return PM_SUSPEND_ON; }
 
 #endif /* !CONFIG_PM_AUTOSLEEP */
 
-#ifdef CONFIG_EARLYSUSPEND
+#ifdef CONFIG_EARLYSUSPEND_LEGACY
 /* kernel/power/earlysuspend.c */
 void request_suspend_state(suspend_state_t state);
 suspend_state_t get_suspend_state(void);

@@ -29,7 +29,7 @@
 #undef hib_warn
 #define hib_warn(fmt, ...) pr_warn("[%s][%s]" fmt, _TAG_HIB_M, __func__, ##__VA_ARGS__);
 
-#ifdef CONFIG_HAS_EARLYSUSPEND
+#ifdef CONFIG_HAS_EARLYSUSPEND_LEGACY
 DEFINE_MUTEX(pm_mutex);
 EXPORT_SYMBOL_GPL(pm_mutex);
 #else
@@ -40,7 +40,7 @@ DEFINE_MUTEX(pm_mutex);
 
 /* Routines for PM-transition notifications */
 
-#ifdef CONFIG_HAS_EARLYSUSPEND
+#ifdef CONFIG_HAS_EARLYSUSPEND_LEGACY
 BLOCKING_NOTIFIER_HEAD(pm_chain_head);
 EXPORT_SYMBOL_GPL(pm_chain_head);
 //<20130327> <marc.huang> add pm_notifier_count
@@ -51,7 +51,7 @@ static BLOCKING_NOTIFIER_HEAD(pm_chain_head);
 
 int register_pm_notifier(struct notifier_block *nb)
 {
-#ifdef CONFIG_HAS_EARLYSUSPEND
+#ifdef CONFIG_HAS_EARLYSUSPEND_LEGACY
 	//<20130327> <marc.huang> add pm_notifier_count
 	++pm_notifier_count;
 #endif
@@ -61,7 +61,7 @@ EXPORT_SYMBOL_GPL(register_pm_notifier);
 
 int unregister_pm_notifier(struct notifier_block *nb)
 {
-#ifdef CONFIG_HAS_EARLYSUSPEND
+#ifdef CONFIG_HAS_EARLYSUSPEND_LEGACY
 	//<20130327> <marc.huang> add pm_notifier_count
 	--pm_notifier_count;
 #endif
@@ -71,7 +71,7 @@ EXPORT_SYMBOL_GPL(unregister_pm_notifier);
 
 int pm_notifier_call_chain(unsigned long val)
 {
-#ifdef CONFIG_HAS_EARLYSUSPEND
+#ifdef CONFIG_HAS_EARLYSUSPEND_LEGACY
 	//<20130327> <marc.huang> add pm_notifier_count
 	int ret;
 	pr_debug("[%s] pm_notifier_count: %u, event = %lu\n", __func__, pm_notifier_count, val);
@@ -85,12 +85,12 @@ int pm_notifier_call_chain(unsigned long val)
 	return notifier_to_errno(ret);
 #endif
 }
-#ifdef CONFIG_HAS_EARLYSUSPEND
+#ifdef CONFIG_HAS_EARLYSUSPEND_LEGACY
 EXPORT_SYMBOL_GPL(pm_notifier_call_chain);
 #endif
 
 /* If set, devices may be suspended and resumed asynchronously. */
-#ifdef CONFIG_HAS_EARLYSUSPEND
+#ifdef CONFIG_HAS_EARLYSUSPEND_LEGACY
 //<20130327> <marc.huang> disable async suspend/resume, set pm_async_enabled = 0
 int pm_async_enabled = 0;
 #else
@@ -326,7 +326,7 @@ static inline void pm_print_times_init(void) {}
 #endif /* CONFIG_PM_SLEEP_DEBUG */
 
 struct kobject *power_kobj;
-#ifdef CONFIG_HAS_EARLYSUSPEND
+#ifdef CONFIG_HAS_EARLYSUSPEND_LEGACY
 EXPORT_SYMBOL_GPL(power_kobj);
 #endif
 
@@ -344,8 +344,8 @@ static ssize_t state_show(struct kobject *kobj, struct kobj_attribute *attr,
 			  char *buf)
 {
 	char *s = buf;
-#ifdef CONFIG_SUSPEND
-#ifdef CONFIG_HAS_EARLYSUSPEND
+#ifdef CONFIG_SUSPEND_LEGACY
+#ifdef CONFIG_HAS_EARLYSUSPEND_LEGACY
 	suspend_state_t i;
 
 	for (i = PM_SUSPEND_MIN; i < PM_SUSPEND_MAX; i++)
@@ -372,9 +372,9 @@ static ssize_t state_show(struct kobject *kobj, struct kobj_attribute *attr,
 
 static suspend_state_t decode_state(const char *buf, size_t n)
 {
-#ifdef CONFIG_SUSPEND
+#ifdef CONFIG_SUSPEND_LEGACY
 	suspend_state_t state = PM_SUSPEND_MIN;
-#ifdef CONFIG_HAS_EARLYSUSPEND
+#ifdef CONFIG_HAS_EARLYSUSPEND_LEGACY
 	struct pm_sleep_state *s;
 #else
 	const char * const *s;
@@ -390,8 +390,8 @@ static suspend_state_t decode_state(const char *buf, size_t n)
 	if (len == 4 && !strncmp(buf, "disk", len))
 		return PM_SUSPEND_MAX;
 
-#ifdef CONFIG_SUSPEND
-#ifdef CONFIG_HAS_EARLYSUSPEND
+#ifdef CONFIG_SUSPEND_LEGACY
+#ifdef CONFIG_HAS_EARLYSUSPEND_LEGACY
 	for (s = &pm_states[state]; state < PM_SUSPEND_MAX; s++, state++)
 		if (len == strlen(s->label)
 		    && !strncmp(buf, s->label, len))
@@ -407,12 +407,12 @@ static suspend_state_t decode_state(const char *buf, size_t n)
 }
 
 
-#ifdef CONFIG_HAS_EARLYSUSPEND
+#ifdef CONFIG_HAS_EARLYSUSPEND_LEGACY
 static ssize_t state_store(struct kobject *kobj, struct kobj_attribute *attr,
 			   const char *buf, size_t n)
 {
-#ifdef CONFIG_SUSPEND
-#ifdef CONFIG_EARLYSUSPEND
+#ifdef CONFIG_SUSPEND_LEGACY
+#ifdef CONFIG_EARLYSUSPEND_LEGACY
     suspend_state_t state = PM_SUSPEND_ON;
 #else
     suspend_state_t state = PM_SUSPEND_STANDBY;
@@ -443,7 +443,7 @@ static ssize_t state_store(struct kobject *kobj, struct kobj_attribute *attr,
     if (len == 4 && !strncmp(buf, "disk", len)) {
 #ifdef CONFIG_MTK_HIBERNATION
         hib_log("trigger hibernation...\n");
-#ifdef CONFIG_EARLYSUSPEND
+#ifdef CONFIG_EARLYSUSPEND_LEGACY
         if (PM_SUSPEND_ON == get_suspend_state()) {
             hib_warn("\"on\" to \"disk\" (i.e., 0->4) is not supported !!!\n");
             error = -EINVAL;
@@ -460,7 +460,7 @@ static ssize_t state_store(struct kobject *kobj, struct kobj_attribute *attr,
         goto Exit;
     }
 
-#ifdef CONFIG_SUSPEND
+#ifdef CONFIG_SUSPEND_LEGACY
     for (s = &pm_states[state]; state < PM_SUSPEND_MAX; s++, state++) {
         if (len == strlen(s->label)
             && !strncmp(buf, s->label, len)) {
@@ -469,7 +469,7 @@ static ssize_t state_store(struct kobject *kobj, struct kobj_attribute *attr,
     }
 
     if (state < PM_SUSPEND_MAX) {
-#ifdef CONFIG_EARLYSUSPEND
+#ifdef CONFIG_EARLYSUSPEND_LEGACY
         if (state == PM_SUSPEND_ON || pm_states[state].state) {
             error = 0;
             request_suspend_state(state);
@@ -622,8 +622,8 @@ static ssize_t autosleep_show(struct kobject *kobj,
 	if (state == PM_SUSPEND_ON)
 		return sprintf(buf, "off\n");
 
-#ifdef CONFIG_SUSPEND
-#ifdef CONFIG_HAS_EARLYSUSPEND
+#ifdef CONFIG_SUSPEND_LEGACY
+#ifdef CONFIG_HAS_EARLYSUSPEND_LEGACY
 	if (state < PM_SUSPEND_MAX)
 		return sprintf(buf, "%s\n", pm_states[state].state ?
 						pm_states[state].label : "error");
@@ -647,7 +647,7 @@ static ssize_t autosleep_store(struct kobject *kobj,
 	suspend_state_t state = decode_state(buf, n);
 	int error;
 
-#ifdef CONFIG_HAS_EARLYSUSPEND
+#ifdef CONFIG_HAS_EARLYSUSPEND_LEGACY
     hib_log("store autosleep_state(%d)\n", state);
 #endif
 	if (state == PM_SUSPEND_ON

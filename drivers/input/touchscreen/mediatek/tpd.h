@@ -10,9 +10,9 @@
 #include <linux/proc_fs.h>
 
 #include <linux/slab.h>
-#if defined(CONFIG_MTK_LEGACY)
+//#if defined(CONFIG_MTK_LEGACY)
 #include <mach/mt_gpio.h>
-#endif
+//#endif
 #ifndef CONFIG_ARM64
 #include <mach/mt_reg_base.h>
 #include <mach/irqs.h>

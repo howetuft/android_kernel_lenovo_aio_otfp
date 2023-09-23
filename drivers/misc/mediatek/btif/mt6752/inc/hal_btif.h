@@ -1,6 +1,8 @@
 #ifndef __HAL_BTIF_H_
 #define __HAL_BTIF_H_
 
+#include "mach/mt_clkmgr.h"
+
 #ifndef CONFIG_OF
 #define MTK_BTIF_REG_BASE BTIF_BASE
 #endif
