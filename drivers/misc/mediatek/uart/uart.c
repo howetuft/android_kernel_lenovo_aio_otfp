@@ -2356,8 +2356,7 @@ static int mtk_uart_probe(struct platform_device *pdev)
 			pr_err("[UART][CCF]cannot get clk_uart0_dma clock. ptr_err:%ld\n", PTR_ERR(clk_uart0_dma));
 			return PTR_ERR(clk_uart0_dma);
 		}
-                // TODO
-		/*set_uart_dma_clk(idx, clk_uart0_dma);*/
+		set_uart_dma_clk(idx, clk_uart0_dma);
 		pr_debug("[UART][CCF]clk_uart0_dma:%p\n", clk_uart0_dma);
 	}
 #else				/*!defined(CONFIG_MTK_LEGACY) */
@@ -2372,8 +2371,7 @@ static int mtk_uart_probe(struct platform_device *pdev)
 		pr_err("[UART%d][PinC]cannot find pinctrl. ptr_err:%ld\n", idx, PTR_ERR(ppinctrl));
 		return err;
 	}
-        // TODO
-	/*set_uart_pinctrl(idx, ppinctrl);*/
+	set_uart_pinctrl(idx, ppinctrl);
 	pr_debug("[UART%d][PinC]set idx:%d, ppinctrl:%p\n", idx, idx, ppinctrl);
 
 #else				/*!defined(CONFIG_MTK_LEGACY) */

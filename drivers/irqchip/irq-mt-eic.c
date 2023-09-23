@@ -33,9 +33,9 @@ static unsigned int EINT_IRQ_BASE;
 #define EINT_TEST_V2
 #endif
 
-//#ifdef CONFIG_MTK_LEGACY
+#ifdef CONFIG_MTK_LEGACY
 #define MD_EINT
-//#endif
+#endif
 
 #if 0
 #define EINT_TEST

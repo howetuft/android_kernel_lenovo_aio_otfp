@@ -229,7 +229,7 @@ static int mtk_btif_probe(struct platform_device *pdev)
 	g_btif[0].private_data = (struct device *)&pdev->dev;
 
 #if !defined(CONFIG_MTK_LEGACY)
-		struct clk *clk_btif = devm_clk_get(&pdev->dev, "btif-clock");
+		clk_btif = devm_clk_get(&pdev->dev, "btif-clock");
 		if (IS_ERR(clk_btif)) {
 			BTIF_ERR_FUNC("[CCF]cannot get clk_btif clock.\n");
 			return PTR_ERR(clk_btif);
@@ -237,7 +237,7 @@ static int mtk_btif_probe(struct platform_device *pdev)
 		BTIF_INFO_FUNC("[CCF]clk_btif=%p\n", clk_btif);
 #endif /* !defined(CONFIG_MTK_LEGACY) */
 #if !defined(CONFIG_MTK_LEGACY)
-					struct clk *clk_btif_apdma = devm_clk_get(&pdev->dev, "btif-apdma-clock");
+					clk_btif_apdma = devm_clk_get(&pdev->dev, "btif-apdma-clock");
 					if (IS_ERR(clk_btif_apdma)) {
 						BTIF_ERR_FUNC("[CCF]cannot get clk_btif_apdma clock.\n");
 						return PTR_ERR(clk_btif_apdma);
