@@ -11,6 +11,16 @@ obj-y   +=  tpd_init.o
 obj-y   +=  tpd_misc.o
 obj-y   +=  tpd_setting.o
 obj-$(CONFIG_LENOVO_CTP_FEATURE)	+=  tpd_feature.o
+
+CFLAGS_mtk_tpd.o := -DDEBUG
+CFLAGS_tpd_button.o := -DDEBUG
+CFLAGS_tpd_calibrate.o := -DDEBUG
+CFLAGS_tpd_debug.o := -DDEBUG
+CFLAGS_tpd_default.o := -DDEBUG
+CFLAGS_tpd_init.o := -DDEBUG
+CFLAGS_tpd_misc.o := -DDEBUG
+CFLAGS_tpd_setting.o := -DDEBUG
+
 ifeq ($(CONFIG_MTK_FT5206),y)
 obj-y	+=  ft5206/
 endif
