@@ -412,9 +412,9 @@ a sample config, send this config should cause the chip cannot work normally*/
 #define GTP_MAX_WIDTH    480
 #define GTP_INT_TRIGGER  0    //0:Rising 1:Falling
 #else
-  #define GTP_MAX_HEIGHT   1024
-  #define GTP_MAX_WIDTH    768
-#define GTP_INT_TRIGGER  1
+  #define GTP_MAX_HEIGHT   1200
+  #define GTP_MAX_WIDTH    1920
+  #define GTP_INT_TRIGGER  0
 #endif
 #define GTP_MAX_TOUCH      5
 
