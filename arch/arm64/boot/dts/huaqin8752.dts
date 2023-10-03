@@ -8,7 +8,7 @@
 	#size-cells = <0x02>;
 
 	chosen {
-		bootargs = "console=tty0 console=ttyMT1,921600n1 root=/dev/ram initrd=0x44000000,0x200000 loglevel=8";
+		bootargs = "console=tty0 root=/dev/ram initrd=0x44000000,0x200000 loglevel=8";
 	};
 
 	mtk-msdc {
@@ -900,10 +900,10 @@
 			//	reg = <0x5d>;
 			//};
 
-			bq24296@6b {
-				compatible = "bq24296";
-				reg = <0x6b>;
-			};
+			//bq24296@6b {
+			//	compatible = "bq24296";
+			//	reg = <0x6b>;
+			//};
 
 			//mt6306@64 {
 			//	compatible = "mediatek,mt6306";
@@ -919,10 +919,10 @@
 			#size-cells = <0x00>;
 			interrupts = <0x00 0x55 0x08>;
 
-			yas530@2e {
-				compatible = "yamaha530";
-				reg = <0x2e>;
-			};
+			//yas530@2e {
+			//	compatible = "yamaha530";
+			//	reg = <0x2e>;
+			//};
 
 			mpu-6515@68 {
 				compatible = "mpu-6515";
