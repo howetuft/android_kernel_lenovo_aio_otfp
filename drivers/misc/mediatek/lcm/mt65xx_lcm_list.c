@@ -21,6 +21,11 @@
 #endif
 
 LCM_DRIVER *lcm_driver_list[] = {
+// A10-70F
+#if defined(NT51021_FHD_DSI_VDO_AUO)
+        &nt51021_fhd_dsi_vdo_auo_lcm_drv,
+#endif
+// ~A10-70F
 //lenovo-sw wuwl 20150427 add for new lcm
 #if defined(HX8395A_HD720_DSI_VDO_TM)
 	&hx8395a_hd720_dsi_vdo_tm_lcm_drv,

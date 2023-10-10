@@ -107,12 +107,13 @@
 
 /* ----------------------------------------------------------------------- */
 
+#if 0
 /* __ADB_DEBUG__ start */
 extern struct usb_ep *ep_in;
 extern struct usb_ep *ep_out;
-extern int bitdebug_enabled;
-extern unsigned bitdebug_writeCnt;
-extern unsigned bitdebug_readCnt;
+int bitdebug_enabled;
+unsigned bitdebug_writeCnt = 1;
+unsigned bitdebug_readCnt = 0;
 
 struct amessage {
 	unsigned command;	/* command identifier constant      */
@@ -442,6 +443,7 @@ static int adbDegInfoHandle(struct usb_ep *ep, struct usb_request *req, char *fu
 }
 
 /* __ADB_DEBUG__ end */
+#endif
 
 #define is_buffer_mapped(req) (is_dma_capable() && \
 					(req->map_state != UN_MAPPED))
@@ -550,11 +552,13 @@ void musb_g_giveback(struct musb_ep *ep,
 		DBG(1, "%s request %p, %d/%d fault %d\n",
 		    ep->end_point.name, request,
 		    req->request.actual, req->request.length, request->status);
-	/* __ADB_DEBUG__ start */
-	if (bitdebug_enabled == 1) {
-		adbDebugInfoWrite(ep, request);
-	}
-	/* __ADB_DEBUG__ end */
+#if 0
+        /* __ADB_DEBUG__ start */
+        if (bitdebug_enabled == 1) {
+                adbDebugInfoWrite(ep, request);
+        }
+        /* __ADB_DEBUG__ end */
+#endif
 	req->request.complete(&req->ep->end_point, &req->request);
 	spin_lock(&musb->lock);
 	ep->busy = busy;
@@ -750,6 +754,7 @@ static void txstate(struct musb *musb, struct musb_request *req)
 			}
 			csr &= ~MUSB_TXCSR_P_UNDERRUN;
 
+#if 0
 			/* __ADB_DEBUG__ start */
 			if (bitdebug_enabled == 1) {
 				if (ep_in == &(musb_ep->end_point)) {
@@ -759,6 +764,7 @@ static void txstate(struct musb *musb, struct musb_request *req)
 				}
 			}
 			/* __ADB_DEBUG__ end */
+#endif
 			musb_writew(epio, MUSB_TXCSR, csr);
 		}
 	}
@@ -814,6 +820,7 @@ void musb_g_tx(struct musb *musb, u8 epnum)
 
 	USB_LOGGER(MUSB_G_TX, MUSB_G_TX, musb_ep->end_point.name, csr);
 
+#if 0
 	/* __ADB_DEBUG__ start */
 	if (bitdebug_enabled == 1) {
 		/* if(ep_in == &(musb_ep->end_point)){ */
@@ -821,6 +828,7 @@ void musb_g_tx(struct musb *musb, u8 epnum)
 		/* } */
 	}
 	/* __ADB_DEBUG__ end */
+#endif
 
 	dma = is_dma_capable() ? musb_ep->dma : NULL;
 
@@ -1191,6 +1199,7 @@ static void rxstate(struct musb *musb, struct musb_request *req)
 
 	/* reach the end or short packet detected */
 	if (request->actual == request->length || fifo_count < musb_ep->packet_sz) {
+#if 0
 		/* __ADB_DEBUG__ start */
 		if (bitdebug_enabled == 1) {
 			if (ep_out == &(musb_ep->end_point)) {
@@ -1199,6 +1208,7 @@ static void rxstate(struct musb *musb, struct musb_request *req)
 			}
 		}
 		/* __ADB_DEBUG__ end */
+#endif
 		musb_g_giveback(musb_ep, request, 0);
 	}
 }
@@ -1246,6 +1256,7 @@ void musb_g_rx(struct musb *musb, u8 epnum)
 	csr = musb_readw(epio, MUSB_RXCSR);
 	dma = is_dma_capable() ? musb_ep->dma : NULL;
 
+#if 0
 	/* __ADB_DEBUG__ start */
 	if (bitdebug_enabled == 1) {
 		/* if(ep_out == &(musb_ep->end_point)){ */
@@ -1253,6 +1264,7 @@ void musb_g_rx(struct musb *musb, u8 epnum)
 		/* } */
 	}
 	/* __ADB_DEBUG__ end */
+#endif
 
 	DBG(1, "<== %s, rxcsr %04x%s %p\n", musb_ep->end_point.name,
 	    csr, dma ? " (dma)" : "", request);
@@ -1385,6 +1397,7 @@ void musb_g_rx(struct musb *musb, u8 epnum)
 				goto exit;
 			return;
 		}
+#if 0
 		/* __ADB_DEBUG__ start */
 		if (bitdebug_enabled == 1) {
 			if (ep_out == &(musb_ep->end_point)) {
@@ -1394,6 +1407,7 @@ void musb_g_rx(struct musb *musb, u8 epnum)
 			}
 		}
 		/* __ADB_DEBUG__ end */
+#endif
 
 		musb_g_giveback(musb_ep, request, 0);
 		/*
@@ -1696,11 +1710,13 @@ static int musb_gadget_enable(struct usb_ep *ep, const struct usb_endpoint_descr
 	if (!ep || !desc)
 		return -EINVAL;
 
+#if 0
 	if (bitdebug_enabled == 1) {
 		unsigned int ret;
 		ret = kfifo_alloc(&fifo, PAGE_SIZE, GFP_KERNEL);
 		spin_lock_init(&debugLock);
 	}
+#endif
 
 	musb_ep = to_musb_ep(ep);
 	hw_ep = musb_ep->hw_ep;
@@ -2000,9 +2016,11 @@ static int musb_gadget_queue(struct usb_ep *ep, struct usb_request *req, gfp_t g
 	struct musb *musb;
 	int status = 0;
 	unsigned long lockflags;
+#if 0
 	/* __ADB_DEBUG__ start */
 	int adbStatus = 0;
 	/* __ADB_DEBUG__ end */
+#endif
 
 	if (!ep || !req)
 		return -EINVAL;
@@ -2018,6 +2036,7 @@ static int musb_gadget_queue(struct usb_ep *ep, struct usb_request *req, gfp_t g
 	if (request->ep != musb_ep)
 		return -EINVAL;
 
+#if 0
 	/* __ADB_DEBUG__ start */
 	if (bitdebug_enabled == 1) {
 		adbStatus = adbDegInfoHandle(ep, req, "musb_gadget_queue");
@@ -2025,6 +2044,7 @@ static int musb_gadget_queue(struct usb_ep *ep, struct usb_request *req, gfp_t g
 			return adbStatus;
 	}
 	/* __ADB_DEBUG__ end */
+#endif
 
 	DBG(2, "<== to %s request=%p\n", ep->name, req);
 

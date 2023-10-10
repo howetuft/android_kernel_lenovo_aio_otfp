@@ -497,11 +497,19 @@ config TOUCHSCREEN_MTK_GT9XX_2
 	bool "GT9XX for Mediatek package"
 	depends on TOUCHSCREEN_MTK
         
+config TOUCHSCREEN_MTK_GT9110
+	bool "GT9110 for Mediatek package"
+	depends on TOUCHSCREEN_MTK
+        
 # Touch panel
 config MTK_GT9XX
         bool "GT9XX for Mediatek package"
         default n
         
+config MTK_GT9110
+        bool "GT9110 for Mediatek package"
+        default n
+
 config GT9XX_2
         bool "GT9XX for Mediatek package"
         default n
