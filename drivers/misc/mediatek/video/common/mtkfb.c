@@ -284,7 +284,7 @@ static int mtkfb_setcolreg(u_int regno, u_int red, u_int green,
 	MSG_FUNC_ENTER();
 
 	bpp = info->var.bits_per_pixel;
-	m = 1 << bpp;
+	m = 16;
 	if (regno >= m) {
 		r = -EINVAL;
 		goto exit;
@@ -297,13 +297,12 @@ static int mtkfb_setcolreg(u_int regno, u_int red, u_int green,
 		    ((red & 0xF800) | ((green & 0xFC00) >> 5) | ((blue & 0xF800) >> 11));
 		break;
 	case 32:
-		/* ARGB8888 */
+		/* ABGR8888 */
 		((u32 *) (info->pseudo_palette))[regno] =
 		    (0xff000000) |
-		    ((red & 0xFF00) << 8) | ((green & 0xFF00)) | ((blue & 0xFF00) >> 8);
+		    ((blue & 0xFF00) << 8) | ((green & 0xFF00)) | ((red & 0xFF00) >> 8);
 		break;
 
-		/* TODO: RGB888, BGR888, ABGR8888 */
 
 	default:
 		ASSERT(0);
