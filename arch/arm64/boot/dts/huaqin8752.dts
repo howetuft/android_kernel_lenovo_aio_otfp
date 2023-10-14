@@ -286,7 +286,7 @@
 			interrupts = <0x00 0xac 0x08>;
 		};
 
-		EINTC@0x1000B000 {
+		eintc: EINTC@0x1000B000 {
 			compatible = "mtk,mt-eic";
 			reg = <0x1000b000 0x1000>;
 			interrupts = <0x00 0x99 0x04>;
@@ -924,7 +924,7 @@
 			//	reg = <0x2e>;
 			//};
 
-			mpu-6515@68 {
+			/* mpu-6515@68 {
 				compatible = "mpu-6515";
 				reg = <0x68>;
 			};
@@ -942,7 +942,7 @@
 			mt6605@28 {
 				compatible = "mediatek,mt6605";
 				reg = <0x28>;
-			};
+			}; */
 		};
 
 		I2C2@0x11009000 {
@@ -1192,10 +1192,10 @@
 		};
 
 		MALI@0x13040000 {
-			compatible = "arm,malit760\0arm,mali-t76x\0arm,malit7xx\0arm,mali-midgard";
+			compatible = "arm,malit760", "arm,mali-t76x", "arm,malit7xx", "arm,mali-midgard";
 			reg = <0x13040000 0x4000>;
-			interrupts = <0x00 0xe3 0x08 0x00 0xe2 0x08 0x00 0xe1 0x08>;
-			interrupt-names = "JOB\0MMU\0GPU";
+			interrupts = <0x00 0xe3 0x08>, <0x00 0xe2 0x08>, <0x00 0xe1 0x08>;
+			interrupt-names = "JOB", "MMU", "GPU";
 			clock-frequency = <0x29b92700>;
 		};
 
