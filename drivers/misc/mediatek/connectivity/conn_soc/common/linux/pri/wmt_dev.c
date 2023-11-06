@@ -1697,7 +1697,13 @@ INT32 wmt_dev_patch_get(PUINT8 pPatchName, osal_firmware * *ppPatch, INT32 padSz
 	set_fs(get_ds());
 
 	/* load patch file from fs */
-	iRet = wmt_dev_read_file(pPatchName, (const PPUINT8)&pfw->data, 0, padSzBuf);
+        PUINT8 path = "/lib/firmware/postmarketos/";
+        PUINT8 pPatchFullName = kzalloc(strlen(path) + strlen(pPatchName) + 1, GFP_KERNEL);
+        strcpy(pPatchFullName, path);
+        strcat(pPatchFullName, pPatchName);
+        pr_info("mt_dev_patch_get: %s\n", pPatchFullName);
+        iRet = wmt_dev_read_file(pPatchFullName, (const PPUINT8)&pfw->data, 0, padSzBuf);
+        kfree(pPatchFullName);
 	set_fs(orig_fs);
 
 #if (LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 29))
