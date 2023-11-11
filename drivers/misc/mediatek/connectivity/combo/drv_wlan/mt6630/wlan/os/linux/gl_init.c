@@ -2607,6 +2607,9 @@ static INT_32 wlanProbe(PVOID pvData)
 				} else if (kalReadToFile("/etc/firmware/wifi.cfg", pucConfigBuf,
 							 WLAN_CFG_FILE_BUF_SIZE, &u4ConfigReadLen) == 0) {
 					/* ToDo:: Nothing */
+				} else if (kalReadToFile("/lib/firmware/postmarketos/wifi.cfg", pucConfigBuf,
+							 WLAN_CFG_FILE_BUF_SIZE, &u4ConfigReadLen) == 0) {
+					/* ToDo:: Nothing */
 				}
 
 				if (pucConfigBuf[0] != '\0' && u4ConfigReadLen > 0)
