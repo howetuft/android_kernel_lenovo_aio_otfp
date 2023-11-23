@@ -37,7 +37,7 @@ struct class *pDetectClass = NULL;
 struct device *pDetectDev = NULL;
 static int gWmtDetectMajor = WMT_DETECT_MAJOR;
 static struct cdev gWmtDetectCdev;
-unsigned int gWmtDetectDbgLvl = WMT_DETECT_LOG_DBG;
+unsigned int gWmtDetectDbgLvl = WMT_DETECT_LOG_INFO;
 
 
 #ifdef MTK_WCN_COMBO_CHIP_SUPPORT

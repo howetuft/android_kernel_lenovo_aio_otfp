@@ -289,11 +289,6 @@ INT32 wmt_lib_deinit(VOID)
 	pThraed = &gDevWmt.thread;
 	iResult = 0;
 
-
-        // TODO Remove
-        pr_info("wmt_lib_deinit SHUNT");
-        return iResult;
-
 	/* stop->deinit->destroy */
 
 	/* 1. stop: stop running mtk_wmtd */
@@ -311,7 +306,6 @@ INT32 wmt_lib_deinit(VOID)
 		WMT_ERR_FUNC("wmt_lib_ps_deinit fail(%d)\n", iRet);
 		iResult += 2;
 	}
-        pr_info("~wmt_lib_ps_deinit\n");
 #endif
 
 	iRet = wmt_plat_deinit();
@@ -319,36 +313,27 @@ INT32 wmt_lib_deinit(VOID)
 		WMT_ERR_FUNC("wmt_plat_deinit fail(%d)\n", iRet);
 		iResult += 4;
 	}
-        pr_info("~wmt_plat_deinit\n");
 
 	osal_event_deinit(&pDevWmt->cmdReq);
-        pr_info("~wmt_event_deinit\n");
 	osal_signal_deinit(&pDevWmt->cmdResp);
-        pr_info("~wmt_signal_deinit\n");
 
 	/* de-initialize stp resources */
 	osal_event_deinit(&pDevWmt->rWmtRxWq);
-        pr_info("~wmt_event_deinit 2\n");
 
-	for (i = 0; i < WMT_OP_BUF_SIZE; i++) {
+	for (i = 0; i < WMT_OP_BUF_SIZE; i++)
 		osal_signal_deinit(&(pDevWmt->arQue[i].signal));
-                pr_info("~osal_signal_deinit %d/%d\n", i, WMT_OP_BUF_SIZE);
-        }
 
 
 	osal_sleepable_lock_deinit(&pDevWmt->rFreeOpQ.sLock);
 	osal_sleepable_lock_deinit(&pDevWmt->rActiveOpQ.sLock);
 	osal_sleepable_lock_deinit(&pDevWmt->psm_lock);
-        pr_info("~osal_sleepable_lock_deinit\n");
 	osal_event_deinit(&pDevWmt->rWmtdWq);
-        pr_info("~wmt_event_deinit 3\n");
 
 	iRet = wmt_core_deinit();
 	if (iRet) {
 		WMT_ERR_FUNC("wmt_core_deinit fail(%d)\n", iRet);
 		iResult += 8;
 	}
-        pr_info("~wmt_core_deinit\n");
 
 	/* 3. destroy */
 	iRet = osal_thread_destroy(pThraed);
@@ -356,18 +341,14 @@ INT32 wmt_lib_deinit(VOID)
 		WMT_ERR_FUNC("osal_thread_stop(0x%p) fail(%d)\n", pThraed, iRet);
 		iResult += 16;
 	}
-        pr_info("~osal_thread_destroy\n");
 	osal_memset(&gDevWmt, 0, sizeof(gDevWmt));
-        pr_info("~osal_memset\n");
 
 #ifdef MTK_WCN_WMT_STP_EXP_SYMBOL_ABSTRACT
 	mtk_wcn_wmt_exp_deinit();
-        pr_info("mtk_wcn_wmt_exp_deinit\n");
 #endif
 
 #if CFG_WMT_LTE_COEX_HANDLING
 	wmt_idc_deinit();
-        pr_info("wmt_idc_deinit\n");
 #endif
 
 	return iResult;
