@@ -15,10 +15,11 @@ ifneq ($(KERNELRELEASE),)
 	else
 	subdir-ccflags-y += -DWMT_IDC_SUPPORT=0
 	endif 
+  CFLAGS_mtk_wcn_consys_hw.o := -DDEBUG
+  CFLAGS_wmt_plat_alps.o := -DDEBUG
   obj-y += mtk_wcn_consys_hw.o
   obj-y += wmt_plat_alps.o
-CFLAGS_mtk_wcn_consys_hw.o := -DDEBUG
-CFLAGS_wmt_plat_alps.o := -DDEBUG
+  subdir-ccflags-y += -DDEBUG
 
 # Otherwise we were called directly from the command
 # line; invoke the kernel build system.

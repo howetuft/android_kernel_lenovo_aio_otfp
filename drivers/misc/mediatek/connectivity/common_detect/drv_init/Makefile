@@ -19,6 +19,17 @@ endif
 	ifneq ($(filter "MT6628",$(CONFIG_MTK_COMBO_CHIP)),)
 		ccflags-y += -DMT6628
 	endif
+	ccflags-y += -I$(src)/inc/
+	ccflags-y += -I$(src)/../
+	ccflags-y += -DDEBUG
+	CFLAGS_conn_drv_init.o := -DDEBUG
+	CFLAGS_common_drv_init.o := -DDEBUG
+	CFLAGS_bluetooth_drv_init.o := -DDEBUG
+	CFLAGS_gps_drv_init.o := -DDEBUG
+	CFLAGS_fm_drv_init.o := -DDEBUG
+	CFLAGS_wlan_drv_init.o := -DDEBUG
+	CFLAGS_ant_drv_init.o := -DDEBUG
+
 endif
 
 else

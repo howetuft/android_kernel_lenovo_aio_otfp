@@ -371,24 +371,25 @@ static noinline_for_stack int ethtool_get_drvinfo(struct net_device *dev,
 	} else {
 		return -EOPNOTSUPP;
 	}
+        pr_info("info.driver %s", info.driver);  // TODO
 
 	/*
 	 * this method of obtaining string set info is deprecated;
 	 * Use ETHTOOL_GSSET_INFO instead.
 	 */
-	if (ops->get_sset_count) {
-		int rc;
+        if (ops->get_sset_count) {
+                int rc;
 
-		rc = ops->get_sset_count(dev, ETH_SS_TEST);
-		if (rc >= 0)
-			info.testinfo_len = rc;
-		rc = ops->get_sset_count(dev, ETH_SS_STATS);
-		if (rc >= 0)
-			info.n_stats = rc;
-		rc = ops->get_sset_count(dev, ETH_SS_PRIV_FLAGS);
-		if (rc >= 0)
-			info.n_priv_flags = rc;
-	}
+                rc = ops->get_sset_count(dev, ETH_SS_TEST);
+                if (rc >= 0)
+                        info.testinfo_len = rc;
+                rc = ops->get_sset_count(dev, ETH_SS_STATS);
+                if (rc >= 0)
+                        info.n_stats = rc;
+                rc = ops->get_sset_count(dev, ETH_SS_PRIV_FLAGS);
+                if (rc >= 0)
+                        info.n_priv_flags = rc;
+        }
 	if (ops->get_regs_len)
 		info.regdump_len = ops->get_regs_len(dev);
 	if (ops->get_eeprom_len)

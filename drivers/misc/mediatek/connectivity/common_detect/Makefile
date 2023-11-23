@@ -74,6 +74,11 @@ ifeq ($(CONFIG_MTK_COMBO),y)
 	obj-y += wmt_detect_pwr.o
 	
 	obj-y += drv_init/
+CFLAGS_mtk_wcn_stub_alps.o := -DDEBUG
+CFLAGS_mtk_stp_exp.o := -DDEBUG
+CFLAGS_wmt_detect.o := -DDEBUG
+CFLAGS_sdio_detect.o := -DDEBUG
+CFLAGS_wmt_detect_pwr.o := -DDEBUG
 	
 endif
 	

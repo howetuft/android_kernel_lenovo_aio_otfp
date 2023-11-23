@@ -14,10 +14,20 @@ ccflags-y += -I$(srctree)/drivers/misc/mediatek/mach/$(MTK_PLATFORM)/include/mac
 endif
 
 ccflags-y += -DWMT_CREATE_NODE_DYNAMIC=1
+ccflags-y += -DDEBUG
 obj-y += stp_btif.o \
          stp_dbg.o \
          stp_exp.o \
          wmt_dev.o \
          wmt_exp.o
+
+CFLAGS_stp_btif.o := -DDEBUG
+CFLAGS_stp_dbg.o  := -DDEBUG
+CFLAGS_stp_exp.o  := -DDEBUG
+CFLAGS_wmt_dev.o  := -DDEBUG
+CFLAGS_wmt_exp.o  := -DDEBUG
+
+
+
 
 endif
