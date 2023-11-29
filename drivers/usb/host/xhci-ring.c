@@ -2638,7 +2638,7 @@ cleanup:
 		 * Do not update event ring dequeue pointer if we're in a loop
 		 * processing missed tds.
 		 */
-		if (!handling_skipped_tds)
+		if (!handling_skipped_tds) {
 			inc_deq(xhci, xhci->event_ring);
 		}
 
