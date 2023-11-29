@@ -3,7 +3,12 @@
 # Copyright (c) 1999,2001 by Jaroslav Kysela <perex@perex.cz>
 #
 
+ifeq ($(CONFIG_SND), m)
+snd-y     := sound.o init.o memory.o info.o control.o misc.o device.o copy_in_user.o
+else
 snd-y     := sound.o init.o memory.o info.o control.o misc.o device.o
+endif
+
 snd-$(CONFIG_ISA_DMA_API) += isadma.o
 snd-$(CONFIG_SND_OSSEMUL) += sound_oss.o info_oss.o
 snd-$(CONFIG_SND_VMASTER) += vmaster.o
@@ -20,7 +25,11 @@ snd-rawmidi-objs  := rawmidi.o
 snd-timer-objs    := timer.o
 snd-hrtimer-objs  := hrtimer.o
 snd-rtctimer-objs := rtctimer.o
+ifeq ($(CONFIG_SND_HWDEP), m)
+snd-hwdep-objs    := hwdep.o copy_in_user.o
+else
 snd-hwdep-objs    := hwdep.o
+endif
 
 snd-compress-objs := compress_offload.o
 
