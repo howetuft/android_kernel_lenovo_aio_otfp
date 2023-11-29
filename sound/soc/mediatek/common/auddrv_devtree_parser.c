@@ -56,6 +56,7 @@ AUDDRV_I2S_ATTRIBUTE *GetI2SSetting(uint32_t I2S_Number, uint32_t I2S_Setting)
     }
     return ret;
 }
+EXPORT_SYMBOL(GetI2SSetting);
 
 void Auddrv_Devtree_Init(void)
 {
@@ -75,6 +76,7 @@ void Auddrv_Devtree_Init(void)
         printk("%s\n bAuddrv_Dev_Tree_Init = %d", __func__, bAuddrv_Dev_Tree_Init);
     }
 }
+EXPORT_SYMBOL(Auddrv_Devtree_Init);
 
 static void I2S0ConfigParse(struct device_node *node)
 {
