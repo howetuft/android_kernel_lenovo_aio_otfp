@@ -157,8 +157,8 @@ static int aud_hdmi_clk_cntr = 0;
 
 static bool mExternalModemStatus = false;
 
-extern bool get_voice_bt_status(void);
-extern bool get_voice_status(void);
+/*extern bool get_voice_bt_status(void);*/
+/*extern bool get_voice_status(void);*/
 extern void Auddrv_Read_Efuse_HPOffset(void);
 
 // mutex lock
@@ -285,6 +285,7 @@ void SetFMEnableFlag(bool bEnable)
     mFMEnable = bEnable;
 }
 
+
 void SetOffloadEnableFlag(bool bEnable)
 {
     mOffloadEnable = bEnable;
@@ -306,12 +307,13 @@ bool ConditionEnterSuspend(void)
     }
 }
 
-// function get internal mode status.
-bool get_internalmd_status(void)
-{
-    bool ret = (get_voice_bt_status() || get_voice_status());
-    return (mExternalModemStatus == true) ? false : ret;
-}
+
+/*// function get internal mode status.*/
+/*bool get_internalmd_status(void)*/
+/*{*/
+    /*bool ret = (get_voice_bt_status() || get_voice_status());*/
+    /*return (mExternalModemStatus == true) ? false : ret;*/
+/*}*/
 
 #if 0
 void DumpMemifSubStream(void)
@@ -402,6 +404,7 @@ void OpenAfeDigitaldl1(bool bEnable)
         EnableAfe(false);
     }
 }
+
 
 void SetExternalModemStatus(const bool bEnable)
 {
@@ -821,6 +824,7 @@ uint32  SetCLkMclk(uint32 I2snum, uint32 SampleRate)
     return I2s_ck_div;
 }
 
+
 void  SetCLkBclk(uint32 MckDiv, uint32 SampleRate, uint32 Channels , uint32 Wlength)
 {
     // BCK set only required in 6595 TDM function div4/div5
@@ -845,6 +849,7 @@ void  SetCLkBclk(uint32 MckDiv, uint32 SampleRate, uint32 Channels , uint32 Wlen
     printk("%s I2S_APll = %dv I2S_Bclk = %d  I2s_Bck_div = %d\n", __func__, I2S_APll, I2S_Bclk, I2s_Bck_div);
     I2s_Bck_div--;
 }
+
 
 uint32  SetCLkHdmiBclk(uint32 MckDiv, uint32 SampleRate, uint32 Channels , uint32 bitDepth)
 {
@@ -1135,6 +1140,8 @@ void EnableAfe(bool bEnable)
     spin_unlock_irqrestore(&afe_control_lock, flags);
 }
 
+
+
 uint32 SampleRateTransform(uint32 SampleRate)
 {
     switch (SampleRate)
@@ -1172,6 +1179,7 @@ uint32 SampleRateTransform(uint32 SampleRate)
     }
     return Soc_Aud_I2S_SAMPLERATE_I2S_44K;
 }
+
 
 bool SetSampleRate(uint32 Aud_block, uint32 SampleRate)
 {
@@ -1249,6 +1257,7 @@ bool SetSampleRate(uint32 Aud_block, uint32 SampleRate)
     }
     return false;
 }
+
 
 bool SetChannels(uint32 Memory_Interface, uint32 channel)
 {
@@ -1339,6 +1348,7 @@ bool SetDaiBt(AudioDigitalDAIBT *mAudioDaiBt)
     return true;
 }
 
+
 bool SetDaiBtEnable(bool bEanble)
 {
     printk("%s bEanble = %d\n", __func__, bEanble);
@@ -1384,6 +1394,7 @@ bool SetDaiBtEnable(bool bEanble)
     }
     return true;
 }
+
 
 bool GetMrgI2SEnable()
 {
@@ -1461,6 +1472,8 @@ bool SetMrgI2SEnable(bool bEnable, unsigned int sampleRate)
     }
     return true;
 }
+
+
 bool Set2ndI2SAdcIn(AudioDigtalI2S *DigtalI2S)
 {
     //K2 todo?
@@ -1517,6 +1530,7 @@ bool SetI2SAdcIn(AudioDigtalI2S *DigtalI2S)
     }
     return true;
 }
+
 
 bool EnableSideGenHw(uint32 connection , bool direction  , bool  Enable)
 {
@@ -1660,6 +1674,7 @@ bool EnableSideGenHw(uint32 connection , bool direction  , bool  Enable)
     return true;
 }
 
+
 bool SetSideGenSampleRate(uint32 SampleRate)
 {
     uint32 sine_mode_ch1 = 0;
@@ -1674,6 +1689,7 @@ bool SetSideGenSampleRate(uint32 SampleRate)
     Afe_Set_Reg(AFE_SGEN_CON0, sine_mode_ch2, 0x00f00000);
     return true;
 }
+
 
 bool Set2ndI2SAdcEnable(bool bEnable)
 {
@@ -1697,6 +1713,7 @@ bool SetI2SAdcEnable(bool bEnable)
     }
     return true;
 }
+
 
 bool Set2ndI2SEnable(bool bEnable)
 {
@@ -1790,6 +1807,7 @@ bool SetI2SDacOut(uint32 SampleRate , bool lowjitter, bool I2SWLen)
     return true;
 }
 
+
 bool SetHwDigitalGainMode(uint32 GainType, uint32 SampleRate, uint32 SamplePerStep)
 {
     //printk("SetHwDigitalGainMode GainType = %d, SampleRate = %d, SamplePerStep= %d\n", GainType, SampleRate, SamplePerStep);
@@ -1808,6 +1826,7 @@ bool SetHwDigitalGainMode(uint32 GainType, uint32 SampleRate, uint32 SamplePerSt
     }
     return true;
 }
+
 
 bool SetHwDigitalGainEnable(int GainType, bool Enable)
 {
@@ -1835,6 +1854,7 @@ bool SetHwDigitalGainEnable(int GainType, bool Enable)
     return true;
 }
 
+
 bool  SetHwDigitalGain(uint32 Gain , int GainType)
 {
     printk("+%s(), Gain = 0x%x, gain type = %d\n", __func__, Gain, GainType);
@@ -1852,6 +1872,7 @@ bool  SetHwDigitalGain(uint32 Gain , int GainType)
     }
     return true;
 }
+
 
 bool SetModemPcmConfig(int modem_index , AudioDigitalPCM p_modem_pcm_attribute)
 {
@@ -1980,6 +2001,7 @@ bool SetModemPcmConfig(int modem_index , AudioDigitalPCM p_modem_pcm_attribute)
     return true;
 }
 
+
 bool SetModemPcmEnable(int modem_index, bool modem_pcm_on)
 {
     uint32 dNeedDisableASM = 0, mPcm1AsyncFifo;
@@ -2030,6 +2052,7 @@ bool SetModemPcmEnable(int modem_index, bool modem_pcm_on)
     }
     return true;
 }
+
 
 
 bool EnableSideToneFilter(bool stf_on)
@@ -2110,6 +2133,7 @@ bool EnableSideToneFilter(bool stf_on)
 }
 
 
+
 bool SetMemoryPathEnable(uint32 Aud_block, bool bEnable)
 {
     printk("%s Aud_block = %d bEnable = %d \n", __func__, Aud_block, bEnable);
@@ -2158,6 +2182,7 @@ bool SetMemoryPathEnable(uint32 Aud_block, bool bEnable)
     return true;
 }
 
+
 bool GetMemoryPathEnable(uint32 Aud_block)
 {
     if (Aud_block < Soc_Aud_Digital_Block_NUM_OF_DIGITAL_BLOCK)
@@ -2166,6 +2191,7 @@ bool GetMemoryPathEnable(uint32 Aud_block)
     }
     return false;
 }
+
 
 bool SetI2SDacEnable(bool bEnable)
 {
@@ -2192,10 +2218,12 @@ bool SetI2SDacEnable(bool bEnable)
     return true;
 }
 
+
 bool GetI2SDacEnable()
 {
     return mAudioMEMIF[Soc_Aud_Digital_Block_I2S_OUT_DAC]->mState ;
 }
+
 
 bool checkUplinkMEMIfStatus()
 {
@@ -2264,6 +2292,7 @@ bool SetConnection(uint32 ConnectionState, uint32 Input , uint32 Output)
     return SetConnectionState(ConnectionState, Input, Output);
 }
 
+
 bool SetIrqEnable(uint32 Irqmode, bool bEnable)
 {
     //printk("+%s(), Irqmode = %d, bEnable = %d\n", __FUNCTION__, Irqmode, bEnable);
@@ -2310,6 +2339,7 @@ bool SetIrqEnable(uint32 Irqmode, bool bEnable)
     return true;
 }
 
+
 bool SetIrqMcuSampleRate(uint32  Irqmode, uint32 SampleRate)
 {
     switch (Irqmode)
@@ -2340,6 +2370,7 @@ bool SetIrqMcuSampleRate(uint32  Irqmode, uint32 SampleRate)
     }
     return true;
 }
+
 
 bool SetIrqMcuCounter(uint32 Irqmode, uint32 Counter)
 {
@@ -2392,6 +2423,7 @@ bool SetIrqMcuCounter(uint32 Irqmode, uint32 Counter)
     }
     return true;
 }
+
 
 bool SetMemDuplicateWrite(uint32 InterfaceType, int dupwrite)
 {
@@ -2575,12 +2607,14 @@ bool  SetMemIfFetchFormatPerSample(uint32 InterfaceType, uint32 eFetchFormat)
     return true;
 }
 
+
 bool SetoutputConnectionFormat(uint32 ConnectionFormat, uint32  Output)
 {
     //printk("+%s(), Data Format = %d, Output = %d\n", __FUNCTION__, ConnectionFormat, Output);
     Afe_Set_Reg(AFE_CONN_24BIT, (ConnectionFormat << Output), (1 << Output));
     return true;
 }
+
 
 bool SetHDMIMCLK()
 {
@@ -2938,6 +2972,7 @@ int AudDrv_Allocate_mem_Buffer(struct device *pDev, Soc_Aud_Digital_Block  MemBl
     return true;
 }
 
+
 AFE_MEM_CONTROL_T  *Get_Mem_ControlT(Soc_Aud_Digital_Block MemBlock)
 {
     if (MemBlock >= 0  && MemBlock <= Soc_Aud_Digital_Block_MEM_HDMI)
@@ -2950,6 +2985,7 @@ AFE_MEM_CONTROL_T  *Get_Mem_ControlT(Soc_Aud_Digital_Block MemBlock)
         return NULL;
     }
 }
+
 
 bool SetMemifSubStream(Soc_Aud_Digital_Block MemBlock , struct snd_pcm_substream *substream)
 {
@@ -2987,6 +3023,7 @@ bool SetMemifSubStream(Soc_Aud_Digital_Block MemBlock , struct snd_pcm_substream
     //DumpMemifSubStream();
     return true;
 }
+
 
 bool ClearMemBlock(Soc_Aud_Digital_Block MemBlock)
 {
@@ -3077,6 +3114,8 @@ bool RemoveMemifSubStream(Soc_Aud_Digital_Block MemBlock, struct snd_pcm_substre
     printk("- %s MemBlock = %d \n ", __func__, MemBlock);
     return true;
 }
+
+
 
 static unsigned long dl1_flags = 0;
 void Auddrv_Dl1_Spinlock_lock(void)
@@ -3494,6 +3533,7 @@ struct snd_dma_buffer *Get_Mem_Buffer(Soc_Aud_Digital_Block MemBlock)
     return NULL;
 }
 
+
 void Auddrv_UL1_Interrupt_Handler(void)
 {
     AFE_MEM_CONTROL_T *Mem_Block = AFE_Mem_Control_context[Soc_Aud_Digital_Block_MEM_VUL];
@@ -3603,6 +3643,7 @@ kal_uint32 Get_Mem_CopySizeByStream(Soc_Aud_Digital_Block MemBlock, struct snd_p
     return 0;
 }
 
+
 kal_uint32 Get_Mem_MaxCopySize(Soc_Aud_Digital_Block MemBlock)
 {
     substreamList *head;
@@ -3644,6 +3685,7 @@ void Set_Mem_CopySizeByStream(Soc_Aud_Digital_Block MemBlock, struct snd_pcm_sub
     spin_unlock_irqrestore(&AFE_Mem_Control_context[MemBlock]->substream_lock, flags);
     //printk("-%s MemBlock = %d \n ", __func__, MemBlock);
 }
+
 
 void Auddrv_UL2_Interrupt_Handler(void)
 {
@@ -3927,11 +3969,13 @@ bool BackUp_Audio_Register(void)
     return true;
 }
 
+
 bool Restore_Audio_Register(void)
 {
     // K2 TODO?
     return true;
 }
+
 
 unsigned int Align64ByteSize(unsigned int insize)
 {
@@ -3941,6 +3985,7 @@ unsigned int Align64ByteSize(unsigned int insize)
     align_size = insize & MAGIC_NUMBER;
     return align_size;
 }
+
 
 
 bool SetOffloadCbk(Soc_Aud_Digital_Block block, void *offloadstream, void (*offloadCbk)(void *stream) )
@@ -3968,3 +4013,140 @@ bool ClrOffloadCbk(Soc_Aud_Digital_Block block, void *offloadstream)
 	Mem_Block->offloadstream = NULL;
 	return true;
 }
+
+EXPORT_SYMBOL(AfeControlMutexLock);
+EXPORT_SYMBOL(AfeControlMutexUnLock);
+EXPORT_SYMBOL(AfeControlSramLock);
+EXPORT_SYMBOL(AfeControlSramUnLock);
+EXPORT_SYMBOL(Align64ByteSize);
+EXPORT_SYMBOL(AudDrv_Allocate_DL1_Buffer);
+EXPORT_SYMBOL(AudDrv_Allocate_mem_Buffer);
+EXPORT_SYMBOL(AudDrv_IRQ_handler);
+EXPORT_SYMBOL(Auddrv_AWB_Interrupt_Handler);
+EXPORT_SYMBOL(Auddrv_DAI_Interrupt_Handler);
+EXPORT_SYMBOL(Auddrv_DL1_Interrupt_Handler);
+EXPORT_SYMBOL(Auddrv_DL2_Interrupt_Handler);
+EXPORT_SYMBOL(Auddrv_Dl1_Spinlock_lock);
+EXPORT_SYMBOL(Auddrv_Dl1_Spinlock_unlock);
+EXPORT_SYMBOL(Auddrv_HDMI_Interrupt_Handler);
+EXPORT_SYMBOL(Auddrv_UL1_Interrupt_Handler);
+EXPORT_SYMBOL(Auddrv_UL1_Spinlock_lock);
+EXPORT_SYMBOL(Auddrv_UL1_Spinlock_unlock);
+EXPORT_SYMBOL(Auddrv_UL2_Interrupt_Handler);
+EXPORT_SYMBOL(BackUp_Audio_Register);
+EXPORT_SYMBOL(CheckMemIfEnable);
+EXPORT_SYMBOL(CheckSize);
+EXPORT_SYMBOL(CleanPreDistortion);
+EXPORT_SYMBOL(ClearMemBlock);
+EXPORT_SYMBOL(ClearSramState);
+EXPORT_SYMBOL(Clear_Mem_CopySize);
+EXPORT_SYMBOL(ClrOffloadCbk);
+EXPORT_SYMBOL(ConditionEnterSuspend);
+EXPORT_SYMBOL(DisableALLbySampleRate);
+EXPORT_SYMBOL(EnableALLbySampleRate);
+EXPORT_SYMBOL(EnableAfe);
+EXPORT_SYMBOL(EnableApll);
+EXPORT_SYMBOL(EnableApll1);
+EXPORT_SYMBOL(EnableApll2);
+EXPORT_SYMBOL(EnableApllTuner);
+EXPORT_SYMBOL(EnableHDMIDivPower);
+EXPORT_SYMBOL(EnableI2SDivPower);
+EXPORT_SYMBOL(EnableSideGenHw);
+EXPORT_SYMBOL(EnableSideToneFilter);
+EXPORT_SYMBOL(EnableSpdif2DivPower);
+EXPORT_SYMBOL(EnableSpdifDivPower);
+EXPORT_SYMBOL(FillDatatoDlmemory);
+EXPORT_SYMBOL(GetApllbySampleRate);
+EXPORT_SYMBOL(GetCaptureDramSize);
+EXPORT_SYMBOL(GetCaptureSramSize);
+EXPORT_SYMBOL(GetHDMIApLLSource);
+EXPORT_SYMBOL(GetI2SDacEnable);
+EXPORT_SYMBOL(GetMemoryPathEnable);
+EXPORT_SYMBOL(GetMrgI2SEnable);
+EXPORT_SYMBOL(GetPLaybackDramSize);
+EXPORT_SYMBOL(GetPLaybackSramFullSize);
+EXPORT_SYMBOL(GetPLaybackSramPartial);
+EXPORT_SYMBOL(GetSramState);
+EXPORT_SYMBOL(Get_Mem_Buffer);
+EXPORT_SYMBOL(Get_Mem_ControlT);
+EXPORT_SYMBOL(Get_Mem_CopySizeByStream);
+EXPORT_SYMBOL(Get_Mem_MaxCopySize);
+EXPORT_SYMBOL(InitAfeControl);
+EXPORT_SYMBOL(OpenAfeDigitaldl1);
+EXPORT_SYMBOL(Register_Aud_Irq);
+EXPORT_SYMBOL(RemoveMemifSubStream);
+EXPORT_SYMBOL(ResetAfeControl);
+EXPORT_SYMBOL(Restore_Audio_Register);
+EXPORT_SYMBOL(SampleRateTransform);
+EXPORT_SYMBOL(Set2ndI2SAdcEnable);
+EXPORT_SYMBOL(Set2ndI2SAdcIn);
+EXPORT_SYMBOL(Set2ndI2SEnable);
+EXPORT_SYMBOL(Set2ndI2SIn);
+EXPORT_SYMBOL(Set2ndI2SInConfig);
+EXPORT_SYMBOL(Set2ndI2SInEnable);
+EXPORT_SYMBOL(Set2ndI2SOut);
+EXPORT_SYMBOL(Set2ndI2SOutAttribute);
+EXPORT_SYMBOL(Set2ndI2SOutEnable);
+EXPORT_SYMBOL(SetCLkBclk);
+EXPORT_SYMBOL(SetCLkHdmiBclk);
+EXPORT_SYMBOL(SetCLkMclk);
+EXPORT_SYMBOL(SetChannels);
+EXPORT_SYMBOL(SetConnection);
+EXPORT_SYMBOL(SetDL1BufferwithBuf);
+EXPORT_SYMBOL(SetDLSrc2);
+EXPORT_SYMBOL(SetDaiBt);
+EXPORT_SYMBOL(SetDaiBtEnable);
+EXPORT_SYMBOL(SetExternalModemStatus);
+EXPORT_SYMBOL(SetFMEnableFlag);
+EXPORT_SYMBOL(SetHDMIApLL);
+EXPORT_SYMBOL(SetHDMIBCLK);
+EXPORT_SYMBOL(SetHDMIChannels);
+EXPORT_SYMBOL(SetHDMIConnection);
+EXPORT_SYMBOL(SetHDMIEnable);
+EXPORT_SYMBOL(SetHDMIMCLK);
+EXPORT_SYMBOL(SetHDMIdatalength);
+EXPORT_SYMBOL(SetHDMIsamplerate);
+EXPORT_SYMBOL(SetHdmiClkOff);
+EXPORT_SYMBOL(SetHdmiClkOn);
+EXPORT_SYMBOL(SetHdmiPcmInterConnection);
+EXPORT_SYMBOL(SetHdmiTdm1Config);
+EXPORT_SYMBOL(SetHdmiTdm2Config);
+EXPORT_SYMBOL(SetHwDigitalGain);
+EXPORT_SYMBOL(SetHwDigitalGainEnable);
+EXPORT_SYMBOL(SetHwDigitalGainMode);
+EXPORT_SYMBOL(SetI2SASRCConfig);
+EXPORT_SYMBOL(SetI2SASRCEnable);
+EXPORT_SYMBOL(SetI2SAdcEnable);
+EXPORT_SYMBOL(SetI2SAdcIn);
+EXPORT_SYMBOL(SetI2SDacEnable);
+EXPORT_SYMBOL(SetI2SDacOut);
+EXPORT_SYMBOL(SetIrqEnable);
+EXPORT_SYMBOL(SetIrqMcuCounter);
+EXPORT_SYMBOL(SetIrqMcuSampleRate);
+EXPORT_SYMBOL(SetMemDuplicateWrite);
+EXPORT_SYMBOL(SetMemIfFetchFormatPerSample);
+EXPORT_SYMBOL(SetMemifSubStream);
+EXPORT_SYMBOL(SetMemoryPathEnable);
+EXPORT_SYMBOL(SetModemPcmConfig);
+EXPORT_SYMBOL(SetModemPcmEnable);
+EXPORT_SYMBOL(SetMrgI2SEnable);
+EXPORT_SYMBOL(SetOffloadCbk);
+EXPORT_SYMBOL(SetOffloadEnableFlag);
+EXPORT_SYMBOL(SetOffloadSWMode);
+EXPORT_SYMBOL(SetSampleRate);
+EXPORT_SYMBOL(SetSideGenSampleRate);
+EXPORT_SYMBOL(SetSramState);
+EXPORT_SYMBOL(SetTDMBckInverse);
+EXPORT_SYMBOL(SetTDMChannelsSdata);
+EXPORT_SYMBOL(SetTDMDatalength);
+EXPORT_SYMBOL(SetTDMEnable);
+EXPORT_SYMBOL(SetTDMI2Smode);
+EXPORT_SYMBOL(SetTDMLrckInverse);
+EXPORT_SYMBOL(SetTDMLrckWidth);
+EXPORT_SYMBOL(SetTDMbckcycle);
+EXPORT_SYMBOL(SetVOWStatus);
+EXPORT_SYMBOL(Set_Mem_CopySizeByStream);
+EXPORT_SYMBOL(SetckSel);
+EXPORT_SYMBOL(SetoutputConnectionFormat);
+EXPORT_SYMBOL(checkUplinkMEMIfStatus);
+/*EXPORT_SYMBOL(get_internalmd_status);*/

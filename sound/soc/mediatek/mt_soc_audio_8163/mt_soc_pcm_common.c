@@ -28,6 +28,7 @@
 
 *******************************************************************************/
 
+#define AUDIO_ALLOCATE_SMP_RATE_DECLARE
 #include "mt_soc_pcm_common.h"
 
 unsigned long audio_frame_to_bytes(struct snd_pcm_substream *substream,unsigned long count)
@@ -72,3 +73,10 @@ unsigned long audio_bytes_to_frame(struct snd_pcm_substream *substream,unsigned 
 }
 
 
+EXPORT_SYMBOL(audio_frame_to_bytes);
+EXPORT_SYMBOL(audio_bytes_to_frame);
+
+EXPORT_SYMBOL(soc_voice_supported_sample_rates);
+EXPORT_SYMBOL(soc_high_supported_sample_rates);
+EXPORT_SYMBOL(soc_normal_supported_sample_rates);
+EXPORT_SYMBOL(soc_fm_supported_sample_rates);

@@ -57,7 +57,6 @@
 #include "AudDrv_Clk.h"
 #include "AudDrv_Kernel.h"
 #include "mt_soc_afe_control.h"
-#define AUDIO_ALLOCATE_SMP_RATE_DECLARE
 #include "mt_soc_pcm_common.h"
 
 //#define CAPTURE_FORCE_USE_DRAM //foruse DRAM for record
@@ -741,5 +740,3 @@ module_exit(mtk_soc_platform_exit);
 
 MODULE_DESCRIPTION("AFE PCM module platform driver");
 MODULE_LICENSE("GPL");
-
-
