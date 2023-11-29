@@ -40,8 +40,8 @@
 #include "gadget_chips.h"
 
 #include "f_fs.c"
-#include "f_audio_source.c"
-#include "f_midi.c"
+//#include "f_audio_source.c"
+//#include "f_midi.c"
 #include "f_mass_storage.c"
 #include "f_adb.c"
 #include "f_mtp.c"
@@ -1684,6 +1684,8 @@ static struct android_usb_function accessory_function = {
 	.ctrlrequest	= accessory_function_ctrlrequest,
 };
 
+#if 0
+
 static int audio_source_function_init(struct android_usb_function *f,
 			struct usb_composite_dev *cdev)
 {
@@ -1736,6 +1738,8 @@ static struct device_attribute *audio_source_function_attributes[] = {
 	&dev_attr_pcm,
 	NULL
 };
+
+#endif
 
 #ifdef CONFIG_MTK_C2K_SUPPORT
 static int rawbulk_function_init(struct android_usb_function *f,
@@ -1815,6 +1819,7 @@ static struct android_usb_function rawbulk_gps_function = {
 };
 #endif
 
+#if 0
 static struct android_usb_function audio_source_function = {
 	.name		= "audio_source",
 	.init		= audio_source_function_init,
@@ -1823,7 +1828,9 @@ static struct android_usb_function audio_source_function = {
 	.unbind_config	= audio_source_function_unbind_config,
 	.attributes	= audio_source_function_attributes,
 };
+#endif
 
+#if 0
 static int midi_function_init(struct android_usb_function *f,
 					struct usb_composite_dev *cdev)
 {
@@ -1877,6 +1884,7 @@ static struct android_usb_function midi_function = {
 	.bind_config	= midi_function_bind_config,
 	.attributes	= midi_function_attributes,
 };
+#endif
 
 static struct android_usb_function *supported_functions[] = {
 	&ffs_function,
@@ -1892,8 +1900,8 @@ static struct android_usb_function *supported_functions[] = {
 	&rndis_function,
 	&mass_storage_function,
 	&accessory_function,
-	&audio_source_function,
-	&midi_function,
+	/*&audio_source_function,*/
+	/*&midi_function,*/
 #ifdef CONFIG_MTK_C2K_SUPPORT
 	&rawbulk_modem_function,
 	&rawbulk_ets_function,
