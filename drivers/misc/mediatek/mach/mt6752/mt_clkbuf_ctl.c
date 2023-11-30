@@ -345,4 +345,4 @@ bool clk_buf_init(void)
 }
 
 
-
+EXPORT_SYMBOL(clk_buf_ctrl);

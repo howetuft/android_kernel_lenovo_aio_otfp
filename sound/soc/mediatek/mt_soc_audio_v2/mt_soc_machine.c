@@ -981,5 +981,3 @@ MODULE_DESCRIPTION("ALSA SoC driver ");
 
 MODULE_LICENSE("GPL");
 MODULE_ALIAS("platform:mt-snd-card");
-
-

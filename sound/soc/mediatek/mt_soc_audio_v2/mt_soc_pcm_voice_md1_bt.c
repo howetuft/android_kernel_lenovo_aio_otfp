@@ -500,5 +500,3 @@ module_exit(mtk_soc_voice_bt_platform_exit);
 
 MODULE_DESCRIPTION("AFE PCM module platform driver");
 MODULE_LICENSE("GPL");
-
-

@@ -642,5 +642,3 @@ module_exit(mtk_soc_dl1_awb_platform_exit);
 
 MODULE_DESCRIPTION("DL1 AWB module platform driver");
 MODULE_LICENSE("GPL");
-
-

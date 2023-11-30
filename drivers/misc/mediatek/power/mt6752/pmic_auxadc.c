@@ -686,3 +686,5 @@ int PMIC_IMM_GetOneChannelValue(upmu_adc_chl_list_enum dwChannel, int deCount, i
 }
 
 #endif
+
+EXPORT_SYMBOL(PMIC_IMM_GetOneChannelValue);

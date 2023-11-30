@@ -84,6 +84,17 @@ int PMIC_IMM_GetOneChannelValue(int dwChannel, int deCount, int trimd);
 
 #define AW8736_MODE_CTRL // AW8736 PA output power mode control
 
+
+extern uint32
+RG_AUDHPLFINETRIM_VAUDP15,
+RG_AUDHPLFINETRIM_VAUDP15_SPKHP,
+RG_AUDHPLTRIM_VAUDP15,
+RG_AUDHPLTRIM_VAUDP15_SPKHP,
+RG_AUDHPRFINETRIM_VAUDP15,
+RG_AUDHPRFINETRIM_VAUDP15_SPKHP,
+RG_AUDHPRTRIM_VAUDP15,
+RG_AUDHPRTRIM_VAUDP15_SPKHP;
+
 // static function declaration
 static bool AudioPreAmp1_Sel(int Mul_Sel);
 static bool GetAdcStatus(void);
@@ -117,9 +128,6 @@ static int mAudio_Vow_Digital_Func_Enable = false;
 static int TrimOffset = 2048;
 static const int DC1unit_in_uv = 19184; // in uv with 0DB
 static const int DC1devider = 8; // in uv
-
-static uint32 RG_AUDHPLTRIM_VAUDP15, RG_AUDHPRTRIM_VAUDP15, RG_AUDHPLFINETRIM_VAUDP15, RG_AUDHPRFINETRIM_VAUDP15,
-       RG_AUDHPLTRIM_VAUDP15_SPKHP, RG_AUDHPRTRIM_VAUDP15_SPKHP, RG_AUDHPLFINETRIM_VAUDP15_SPKHP, RG_AUDHPRFINETRIM_VAUDP15_SPKHP;
 
 #ifdef CONFIG_MTK_SPEAKER
 static int Speaker_mode = AUDIO_SPEAKER_MODE_AB;
@@ -416,89 +424,6 @@ void vow_irq_handler(void)
     //VowDrv_ChangeStatus();
 }
 
-extern kal_uint32 upmu_get_reg_value(kal_uint32 reg);
-
-void Auddrv_Read_Efuse_HPOffset(void)
-{
-    U32 ret = 0;
-    U32 reg_val = 0;
-    int i = 0, j = 0;
-    U32 efusevalue[3];
-
-    printk("Auddrv_Read_Efuse_HPOffset(+)\n");
-
-    //1. enable efuse ctrl engine clock
-    ret = pmic_config_interface(0x026C, 0x0040, 0xFFFF, 0);
-    ret = pmic_config_interface(0x024E, 0x0004, 0xFFFF, 0);
-
-    //2.
-    ret = pmic_config_interface(0x0C16, 0x1, 0x1, 0);
-
-    /*
-    Audio data from 746 to 770
-    0xe 746 751
-    0xf 752 767
-    0x10 768 770
-    */
-
-    for (i = 0xe; i <= 0x10; i++)
-    {
-        //3. set row to read
-        ret = pmic_config_interface(0x0C00, i, 0x1F, 1);
-
-        //4. Toggle
-        ret = pmic_read_interface(0xC10, &reg_val, 0x1, 0);
-        if (reg_val == 0)
-        {
-            ret = pmic_config_interface(0xC10, 1, 0x1, 0);
-        }
-        else
-        {
-            ret = pmic_config_interface(0xC10, 0, 0x1, 0);
-        }
-
-        //5. polling Reg[0xC1A]
-        reg_val = 1;
-        while (reg_val == 1)
-        {
-            ret = pmic_read_interface(0xC1A, &reg_val, 0x1, 0);
-            printk("Auddrv_Read_Efuse_HPOffset polling 0xC1A=0x%x\n", reg_val);
-        }
-
-        udelay(1000);//Need to delay at least 1ms for 0xC1A and than can read 0xC18
-
-        //6. read data
-        efusevalue[j] = upmu_get_reg_value(0x0C18);
-        printk("HPoffset : efuse[%d]=0x%x\n", j, efusevalue[j]);
-        j++;
-    }
-
-    //7. Disable efuse ctrl engine clock
-    ret = pmic_config_interface(0x024C, 0x0004, 0xFFFF, 0);
-    ret = pmic_config_interface(0x026A, 0x0040, 0xFFFF, 0);
-
-    RG_AUDHPLTRIM_VAUDP15 = (efusevalue[0] >> 10) & 0xf;
-    RG_AUDHPRTRIM_VAUDP15   = ((efusevalue[0] >> 14) & 0x3) + ((efusevalue[1] & 0x3) << 2);
-    RG_AUDHPLFINETRIM_VAUDP15       = (efusevalue[1] >> 3) & 0x3;
-    RG_AUDHPRFINETRIM_VAUDP15 = (efusevalue[1] >> 5) & 0x3;
-    RG_AUDHPLTRIM_VAUDP15_SPKHP = (efusevalue[1] >> 7) & 0xF;
-    RG_AUDHPRTRIM_VAUDP15_SPKHP = (efusevalue[1] >> 11) & 0xF;
-    RG_AUDHPLFINETRIM_VAUDP15_SPKHP = ((efusevalue[1] >> 15) & 0x1) + ((efusevalue[2] & 0x1) << 1);
-    RG_AUDHPRFINETRIM_VAUDP15_SPKHP = ((efusevalue[2] >> 1) & 0x3);
-
-    printk("RG_AUDHPLTRIM_VAUDP15 = %x\n", RG_AUDHPLTRIM_VAUDP15);
-    printk("RG_AUDHPRTRIM_VAUDP15 = %x\n", RG_AUDHPRTRIM_VAUDP15);
-    printk("RG_AUDHPLFINETRIM_VAUDP15 = %x\n", RG_AUDHPLFINETRIM_VAUDP15);
-    printk("RG_AUDHPRFINETRIM_VAUDP15 = %x\n", RG_AUDHPRFINETRIM_VAUDP15);
-    printk("RG_AUDHPLTRIM_VAUDP15_SPKHP = %x\n", RG_AUDHPLTRIM_VAUDP15_SPKHP);
-    printk("RG_AUDHPRTRIM_VAUDP15_SPKHP = %x\n", RG_AUDHPRTRIM_VAUDP15_SPKHP);
-    printk("RG_AUDHPLFINETRIM_VAUDP15_SPKHP = %x\n", RG_AUDHPLFINETRIM_VAUDP15_SPKHP);
-    printk("RG_AUDHPRFINETRIM_VAUDP15_SPKHP = %x\n", RG_AUDHPRFINETRIM_VAUDP15_SPKHP);
-
-    printk("Auddrv_Read_Efuse_HPOffset(-)\n");
-}
-
-EXPORT_SYMBOL(Auddrv_Read_Efuse_HPOffset);
 
 #ifdef CONFIG_MTK_SPEAKER
 static void Apply_Speaker_Gain(void)
@@ -5189,3 +5114,179 @@ module_exit(mtk_mt6331_codec_exit);
 MODULE_DESCRIPTION("MTK  codec driver");
 MODULE_LICENSE("GPL v2");
 
+
+EXPORT_SYMBOL(ADC_LOOP_DAC_Func);
+EXPORT_SYMBOL(ADC_LOOP_DAC_HP_Get);
+EXPORT_SYMBOL(ADC_LOOP_DAC_HP_Set);
+EXPORT_SYMBOL(ADC_LOOP_DAC_HS_Get);
+EXPORT_SYMBOL(ADC_LOOP_DAC_HS_Set);
+EXPORT_SYMBOL(Apply_Speaker_Gain);
+EXPORT_SYMBOL(Aud_Clk_Buf_Get);
+EXPORT_SYMBOL(Aud_Clk_Buf_Set);
+EXPORT_SYMBOL(AudioPreAmp1_Sel);
+EXPORT_SYMBOL(AudioPreAmp2_Sel);
+EXPORT_SYMBOL(Audio_ADC1_Get);
+EXPORT_SYMBOL(Audio_ADC1_Sel_Get);
+EXPORT_SYMBOL(Audio_ADC1_Sel_Set);
+EXPORT_SYMBOL(Audio_ADC1_Set);
+EXPORT_SYMBOL(Audio_ADC2_Get);
+EXPORT_SYMBOL(Audio_ADC2_Sel_Get);
+EXPORT_SYMBOL(Audio_ADC2_Sel_Set);
+EXPORT_SYMBOL(Audio_ADC2_Set);
+EXPORT_SYMBOL(Audio_ADC3_Get);
+EXPORT_SYMBOL(Audio_ADC3_Sel_Get);
+EXPORT_SYMBOL(Audio_ADC3_Sel_Set);
+EXPORT_SYMBOL(Audio_ADC3_Set);
+EXPORT_SYMBOL(Audio_ADC4_Get);
+EXPORT_SYMBOL(Audio_ADC4_Sel_Get);
+EXPORT_SYMBOL(Audio_ADC4_Sel_Set);
+EXPORT_SYMBOL(Audio_ADC4_Set);
+EXPORT_SYMBOL(Audio_Adc_Power_Mode_Get);
+EXPORT_SYMBOL(Audio_Adc_Power_Mode_Set);
+EXPORT_SYMBOL(Audio_AmpL_Get);
+EXPORT_SYMBOL(Audio_AmpL_Set);
+EXPORT_SYMBOL(Audio_AmpR_Get);
+EXPORT_SYMBOL(Audio_AmpR_Set);
+EXPORT_SYMBOL(Audio_Amp_Change);
+EXPORT_SYMBOL(Audio_AuxAdcData_Get);
+EXPORT_SYMBOL(Audio_AuxAdcData_Set);
+EXPORT_SYMBOL(Audio_Hp_Impedance_Get);
+EXPORT_SYMBOL(Audio_Hp_Impedance_Set);
+EXPORT_SYMBOL(Audio_Mic1_Mode_Select_Get);
+EXPORT_SYMBOL(Audio_Mic1_Mode_Select_Set);
+EXPORT_SYMBOL(Audio_Mic2_Mode_Select_Get);
+EXPORT_SYMBOL(Audio_Mic2_Mode_Select_Set);
+EXPORT_SYMBOL(Audio_Mic3_Mode_Select_Get);
+EXPORT_SYMBOL(Audio_Mic3_Mode_Select_Set);
+EXPORT_SYMBOL(Audio_Mic4_Mode_Select_Get);
+EXPORT_SYMBOL(Audio_Mic4_Mode_Select_Set);
+EXPORT_SYMBOL(Audio_MicSource1_Get);
+EXPORT_SYMBOL(Audio_MicSource1_Set);
+EXPORT_SYMBOL(Audio_MicSource2_Get);
+EXPORT_SYMBOL(Audio_MicSource2_Set);
+EXPORT_SYMBOL(Audio_MicSource3_Get);
+EXPORT_SYMBOL(Audio_MicSource3_Set);
+EXPORT_SYMBOL(Audio_MicSource4_Get);
+EXPORT_SYMBOL(Audio_MicSource4_Set);
+EXPORT_SYMBOL(Audio_PGA1_Get);
+EXPORT_SYMBOL(Audio_PGA1_Set);
+EXPORT_SYMBOL(Audio_PGA2_Get);
+EXPORT_SYMBOL(Audio_PGA2_Set);
+EXPORT_SYMBOL(Audio_PGA3_Get);
+EXPORT_SYMBOL(Audio_PGA3_Set);
+EXPORT_SYMBOL(Audio_PGA4_Get);
+EXPORT_SYMBOL(Audio_PGA4_Set);
+EXPORT_SYMBOL(Audio_PreAmp1_Get);
+EXPORT_SYMBOL(Audio_PreAmp1_Set);
+EXPORT_SYMBOL(Audio_PreAmp2_Get);
+EXPORT_SYMBOL(Audio_PreAmp2_Set);
+EXPORT_SYMBOL(Audio_Vow_ADC_Func_Switch_Get);
+EXPORT_SYMBOL(Audio_Vow_ADC_Func_Switch_Set);
+EXPORT_SYMBOL(Audio_Vow_Cfg0_Get);
+EXPORT_SYMBOL(Audio_Vow_Cfg0_Set);
+EXPORT_SYMBOL(Audio_Vow_Cfg1_Get);
+EXPORT_SYMBOL(Audio_Vow_Cfg1_Set);
+EXPORT_SYMBOL(Audio_Vow_Cfg2_Get);
+EXPORT_SYMBOL(Audio_Vow_Cfg2_Set);
+EXPORT_SYMBOL(Audio_Vow_Cfg3_Get);
+EXPORT_SYMBOL(Audio_Vow_Cfg3_Set);
+EXPORT_SYMBOL(Audio_Vow_Cfg4_Get);
+EXPORT_SYMBOL(Audio_Vow_Cfg4_Set);
+EXPORT_SYMBOL(Audio_Vow_Cfg5_Get);
+EXPORT_SYMBOL(Audio_Vow_Cfg5_Set);
+EXPORT_SYMBOL(Audio_Vow_Digital_Func_Switch_Get);
+EXPORT_SYMBOL(Audio_Vow_Digital_Func_Switch_Set);
+EXPORT_SYMBOL(Audio_Vow_MIC_Type_Select_Get);
+EXPORT_SYMBOL(Audio_Vow_MIC_Type_Select_Set);
+EXPORT_SYMBOL(Audio_Vow_State_Get);
+EXPORT_SYMBOL(Audio_Vow_State_Set);
+EXPORT_SYMBOL(ClsqEnable);
+EXPORT_SYMBOL(EnableDcCompensation);
+EXPORT_SYMBOL(EnableTrimbuffer);
+EXPORT_SYMBOL(Ext_Speaker_Amp_Change);
+EXPORT_SYMBOL(Ext_Speaker_Amp_Get);
+EXPORT_SYMBOL(Ext_Speaker_Amp_Set);
+EXPORT_SYMBOL(GetAdcStatus);
+EXPORT_SYMBOL(GetDLNewIFFrequency);
+EXPORT_SYMBOL(GetDLStatus);
+EXPORT_SYMBOL(GetDacStatus);
+EXPORT_SYMBOL(GetULFrequency);
+EXPORT_SYMBOL(Handset_PGA_Get);
+EXPORT_SYMBOL(Handset_PGA_Set);
+EXPORT_SYMBOL(HeadsetVoloumeRestore);
+EXPORT_SYMBOL(HeadsetVoloumeSet);
+EXPORT_SYMBOL(Headset_PGAL_Get);
+EXPORT_SYMBOL(Headset_PGAL_Set);
+EXPORT_SYMBOL(Headset_PGAR_Get);
+EXPORT_SYMBOL(Headset_PGAR_Set);
+EXPORT_SYMBOL(Headset_Speaker_Amp_Change);
+EXPORT_SYMBOL(Headset_Speaker_Amp_Get);
+EXPORT_SYMBOL(Headset_Speaker_Amp_Set);
+EXPORT_SYMBOL(InitCodecDefault);
+EXPORT_SYMBOL(Lineout_PGAL_Get);
+EXPORT_SYMBOL(Lineout_PGAL_Set);
+EXPORT_SYMBOL(Lineout_PGAR_Get);
+EXPORT_SYMBOL(Lineout_PGAR_Set);
+EXPORT_SYMBOL(NvregEnable);
+EXPORT_SYMBOL(OpenAnalogHeadphone);
+EXPORT_SYMBOL(OpenAnalogTrimHardware);
+EXPORT_SYMBOL(OpenHeadPhoneImpedanceSetting);
+EXPORT_SYMBOL(OpenTrimBufferHardware);
+EXPORT_SYMBOL(RestorePowerState);
+EXPORT_SYMBOL(SavePowerState);
+EXPORT_SYMBOL(SetAnalogSuspend);
+EXPORT_SYMBOL(SetDCcoupleNP);
+EXPORT_SYMBOL(SetDcCompenSation);
+EXPORT_SYMBOL(SetDcCompenSation_SPKHP);
+EXPORT_SYMBOL(SetHpLOffsetTrim);
+EXPORT_SYMBOL(SetHplOffset);
+EXPORT_SYMBOL(SetHplTrimOffset);
+EXPORT_SYMBOL(SetHprOffset);
+EXPORT_SYMBOL(SetHprOffsetTrim);
+EXPORT_SYMBOL(SetHprTrimOffset);
+EXPORT_SYMBOL(SetMicPGAGain);
+EXPORT_SYMBOL(SetSdmLevel);
+EXPORT_SYMBOL(SineTable_DAC_HP_Get);
+EXPORT_SYMBOL(SineTable_DAC_HP_Set);
+EXPORT_SYMBOL(SineTable_UL2_Get);
+EXPORT_SYMBOL(SineTable_UL2_Set);
+EXPORT_SYMBOL(Speaker_Amp_Change);
+EXPORT_SYMBOL(Speaker_Amp_Get);
+EXPORT_SYMBOL(Speaker_Amp_Set);
+EXPORT_SYMBOL(Topck_Enable);
+EXPORT_SYMBOL(TurnOffDacPower);
+EXPORT_SYMBOL(TurnOnADcPowerACC);
+EXPORT_SYMBOL(TurnOnADcPowerDCC);
+EXPORT_SYMBOL(TurnOnADcPowerDCCECM);
+EXPORT_SYMBOL(TurnOnADcPowerDmic);
+EXPORT_SYMBOL(TurnOnDacPower);
+EXPORT_SYMBOL(TurnOnVOWADcPowerACC);
+EXPORT_SYMBOL(TurnOnVOWDigitalHW);
+EXPORT_SYMBOL(ULSampleRateTransform);
+EXPORT_SYMBOL(VOW12MCK_Enable);
+EXPORT_SYMBOL(Voice_Amp_Change);
+EXPORT_SYMBOL(Voice_Amp_Get);
+EXPORT_SYMBOL(Voice_Amp_Set);
+EXPORT_SYMBOL(Voice_Call_DAC_DAC_HS_Get);
+EXPORT_SYMBOL(Voice_Call_DAC_DAC_HS_Set);
+EXPORT_SYMBOL(audckbufEnable);
+EXPORT_SYMBOL(mt6323_codec_trigger);
+EXPORT_SYMBOL(mt6331_Readable_registers);
+EXPORT_SYMBOL(mt6331_codec_init_reg);
+EXPORT_SYMBOL(mt6331_codec_probe);
+EXPORT_SYMBOL(mt6331_codec_remove);
+EXPORT_SYMBOL(mt6331_read);
+EXPORT_SYMBOL(mt6331_volatile_registers);
+EXPORT_SYMBOL(mt6331_write);
+EXPORT_SYMBOL(mt63xx_codec_prepare);
+EXPORT_SYMBOL(mt63xx_codec_startup);
+EXPORT_SYMBOL(mtk_mt6331_codec_dev_probe);
+EXPORT_SYMBOL(mtk_mt6331_codec_dev_remove);
+EXPORT_SYMBOL(mtk_mt6331_codec_exit);
+EXPORT_SYMBOL(mtk_mt6331_codec_init);
+EXPORT_SYMBOL(setHpGainZero);
+EXPORT_SYMBOL(setOffsetTrimBufferGain);
+EXPORT_SYMBOL(setOffsetTrimMux);
+EXPORT_SYMBOL(vow_irq_handler);
+
+MODULE_LICENSE("GPL");

@@ -658,5 +658,3 @@ module_exit(mtk_soc_bt_dai_platform_exit);
 
 MODULE_DESCRIPTION("BT DAI module platform driver");
 MODULE_LICENSE("GPL");
-
-

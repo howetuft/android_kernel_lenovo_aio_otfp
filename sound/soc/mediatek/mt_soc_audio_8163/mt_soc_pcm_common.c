@@ -28,7 +28,6 @@
 
 *******************************************************************************/
 
-#define AUDIO_ALLOCATE_SMP_RATE_DECLARE
 #include "mt_soc_pcm_common.h"
 
 unsigned long audio_frame_to_bytes(struct snd_pcm_substream *substream,unsigned long count)

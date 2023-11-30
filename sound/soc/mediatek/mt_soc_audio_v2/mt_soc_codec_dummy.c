@@ -601,5 +601,4 @@ module_exit(mtk_codec_dummy_exit);
 
 /* Module information */
 MODULE_DESCRIPTION("MTK  dummy codec driver");
-MODULE_LICENSE("GPL v2");
-
+MODULE_LICENSE("GPL");

@@ -665,5 +665,3 @@ module_exit(mtk_soc_dl1bt_platform_exit);
 
 MODULE_DESCRIPTION("AFE dl1bt module platform driver");
 MODULE_LICENSE("GPL");
-
-

@@ -1811,3 +1811,5 @@ unsigned int enable_4G(void)
         return enable_4gb;
 }
 #endif
+
+EXPORT_SYMBOL(enable_4G);

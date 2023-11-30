@@ -717,5 +717,3 @@ module_exit(mtk_soc_hp_impedance_platform_exit);
 
 MODULE_DESCRIPTION("hp impedance module platform driver");
 MODULE_LICENSE("GPL");
-
-

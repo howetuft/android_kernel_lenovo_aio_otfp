@@ -455,5 +455,3 @@ module_exit(mtk_soc_uldlloopback_platform_exit);
 
 MODULE_DESCRIPTION("loopback module platform driver");
 MODULE_LICENSE("GPL");
-
-

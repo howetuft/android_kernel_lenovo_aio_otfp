@@ -116,6 +116,443 @@
 #include <mach/eint.h>
 #include "AudDrv_Common.h"
 
+
+#ifdef CONFIG_OF
+#include <linux/of.h>
+#include <linux/of_irq.h>
+#include <linux/of_address.h>
+
+uint32 RG_AUDHPLTRIM_VAUDP15, RG_AUDHPRTRIM_VAUDP15, RG_AUDHPLFINETRIM_VAUDP15, RG_AUDHPRFINETRIM_VAUDP15, RG_AUDHPLTRIM_VAUDP15_SPKHP, RG_AUDHPRTRIM_VAUDP15_SPKHP, RG_AUDHPLFINETRIM_VAUDP15_SPKHP, RG_AUDHPRFINETRIM_VAUDP15_SPKHP;
+
+EXPORT_SYMBOL(RG_AUDHPLFINETRIM_VAUDP15   );
+EXPORT_SYMBOL(RG_AUDHPLFINETRIM_VAUDP15_SPKHP);
+EXPORT_SYMBOL(RG_AUDHPLTRIM_VAUDP15       );
+EXPORT_SYMBOL(RG_AUDHPLTRIM_VAUDP15_SPKHP );
+EXPORT_SYMBOL(RG_AUDHPRFINETRIM_VAUDP15   );
+EXPORT_SYMBOL(RG_AUDHPRFINETRIM_VAUDP15_SPKHP);
+EXPORT_SYMBOL(RG_AUDHPRTRIM_VAUDP15       );
+EXPORT_SYMBOL(RG_AUDHPRTRIM_VAUDP15_SPKHP );
+
+extern kal_uint32 upmu_get_reg_value(kal_uint32 reg);
+
+void Auddrv_Read_Efuse_HPOffset(void)
+{
+    U32 ret = 0;
+    U32 reg_val = 0;
+    int i = 0, j = 0;
+    U32 efusevalue[3];
+
+    printk("Auddrv_Read_Efuse_HPOffset(+)\n");
+
+    //1. enable efuse ctrl engine clock
+    ret = pmic_config_interface(0x026C, 0x0040, 0xFFFF, 0);
+    ret = pmic_config_interface(0x024E, 0x0004, 0xFFFF, 0);
+
+    //2.
+    ret = pmic_config_interface(0x0C16, 0x1, 0x1, 0);
+
+    /*
+    Audio data from 746 to 770
+    0xe 746 751
+    0xf 752 767
+    0x10 768 770
+    */
+
+    for (i = 0xe; i <= 0x10; i++)
+    {
+        //3. set row to read
+        ret = pmic_config_interface(0x0C00, i, 0x1F, 1);
+
+        //4. Toggle
+        ret = pmic_read_interface(0xC10, &reg_val, 0x1, 0);
+        if (reg_val == 0)
+        {
+            ret = pmic_config_interface(0xC10, 1, 0x1, 0);
+        }
+        else
+        {
+            ret = pmic_config_interface(0xC10, 0, 0x1, 0);
+        }
+
+        //5. polling Reg[0xC1A]
+        reg_val = 1;
+        while (reg_val == 1)
+        {
+            ret = pmic_read_interface(0xC1A, &reg_val, 0x1, 0);
+            printk("Auddrv_Read_Efuse_HPOffset polling 0xC1A=0x%x\n", reg_val);
+        }
+
+        udelay(1000);//Need to delay at least 1ms for 0xC1A and than can read 0xC18
+
+        //6. read data
+        efusevalue[j] = upmu_get_reg_value(0x0C18);
+        printk("HPoffset : efuse[%d]=0x%x\n", j, efusevalue[j]);
+        j++;
+    }
+
+    //7. Disable efuse ctrl engine clock
+    ret = pmic_config_interface(0x024C, 0x0004, 0xFFFF, 0);
+    ret = pmic_config_interface(0x026A, 0x0040, 0xFFFF, 0);
+
+    RG_AUDHPLTRIM_VAUDP15 = (efusevalue[0] >> 10) & 0xf;
+    RG_AUDHPRTRIM_VAUDP15   = ((efusevalue[0] >> 14) & 0x3) + ((efusevalue[1] & 0x3) << 2);
+    RG_AUDHPLFINETRIM_VAUDP15       = (efusevalue[1] >> 3) & 0x3;
+    RG_AUDHPRFINETRIM_VAUDP15 = (efusevalue[1] >> 5) & 0x3;
+    RG_AUDHPLTRIM_VAUDP15_SPKHP = (efusevalue[1] >> 7) & 0xF;
+    RG_AUDHPRTRIM_VAUDP15_SPKHP = (efusevalue[1] >> 11) & 0xF;
+    RG_AUDHPLFINETRIM_VAUDP15_SPKHP = ((efusevalue[1] >> 15) & 0x1) + ((efusevalue[2] & 0x1) << 1);
+    RG_AUDHPRFINETRIM_VAUDP15_SPKHP = ((efusevalue[2] >> 1) & 0x3);
+
+    printk("RG_AUDHPLTRIM_VAUDP15 = %x\n", RG_AUDHPLTRIM_VAUDP15);
+    printk("RG_AUDHPRTRIM_VAUDP15 = %x\n", RG_AUDHPRTRIM_VAUDP15);
+    printk("RG_AUDHPLFINETRIM_VAUDP15 = %x\n", RG_AUDHPLFINETRIM_VAUDP15);
+    printk("RG_AUDHPRFINETRIM_VAUDP15 = %x\n", RG_AUDHPRFINETRIM_VAUDP15);
+    printk("RG_AUDHPLTRIM_VAUDP15_SPKHP = %x\n", RG_AUDHPLTRIM_VAUDP15_SPKHP);
+    printk("RG_AUDHPRTRIM_VAUDP15_SPKHP = %x\n", RG_AUDHPRTRIM_VAUDP15_SPKHP);
+    printk("RG_AUDHPLFINETRIM_VAUDP15_SPKHP = %x\n", RG_AUDHPLFINETRIM_VAUDP15_SPKHP);
+    printk("RG_AUDHPRFINETRIM_VAUDP15_SPKHP = %x\n", RG_AUDHPRFINETRIM_VAUDP15_SPKHP);
+
+    printk("Auddrv_Read_Efuse_HPOffset(-)\n");
+}
+
+
+static unsigned int pin_extspkamp, pin_extspkamp_2, pin_vowclk, pin_audclk, pin_audmiso, pin_audmosi, pin_i2s1clk, pin_i2s1dat, pin_i2s1mclk, pin_i2s1ws;
+static unsigned int pin_mode_audclk, pin_mode_audmosi, pin_mode_audmiso, pin_mode_vowclk, pin_mode_extspkamp, pin_mode_extspkamp_2, pin_mode_i2s1clk, pin_mode_i2s1dat, pin_mode_i2s1mclk, pin_mode_i2s1ws;
+static unsigned int if_config1, if_config2, if_config3, if_config4, if_config5, if_config6, if_config7, if_config8, if_config9, if_config10;
+
+extern void *AFE_BASE_ADDRESS;
+u32 afe_irq_number = 0;
+int AFE_BASE_PHY;
+
+int Auddrv_Reg_map_new(void)
+{
+    struct device_node *node = NULL;
+
+    node = of_find_compatible_node(NULL, NULL, "mediatek,mt_soc_pcm_dl1");
+    if (node)
+    {
+        /* Setup IO addresses */
+        AFE_BASE_ADDRESS = of_iomap(node, 0);
+        printk("[mt_soc_pcm_dl1] AFE_BASE_ADDRESS=0x%p\n", AFE_BASE_ADDRESS);
+    }
+    else
+    {
+        printk("[mt_soc_pcm_dl1] node NULL, can't iomap AFE_BASE!!!\n");
+    }
+    of_property_read_u32(node, "reg", &AFE_BASE_PHY);
+    printk("[mt_soc_pcm_dl1] AFE_BASE_PHY=0x%x\n", AFE_BASE_PHY);
+
+    /*get afe irq num*/
+    afe_irq_number = irq_of_parse_and_map(node, 0);
+    printk("[mt_soc_pcm_dl1] afe_irq_number=0x%x\n", afe_irq_number);
+    if (!afe_irq_number)
+    {
+        printk("[mt_soc_pcm_dl1] get afe_irq_number failed!!!\n");
+        return -1;
+    }
+    return 0;
+}
+EXPORT_SYMBOL(Auddrv_Reg_map_new);
+EXPORT_SYMBOL(afe_irq_number);
+
+int Auddrv_OF_ParseGPIO(void)
+{
+    struct device_node *node = NULL;
+
+    node = of_find_compatible_node(NULL, NULL, "mediatek,mt_soc_pcm_dl1");
+    if (node)
+    {
+        if_config1 = 1;
+        if_config2 = 1;
+        if_config3 = 1;
+        if_config4 = 1;
+        if_config5 = 1;
+        if_config6 = 1;
+        if_config7 = 1;
+        if_config8 = 1;
+        if_config9 = 1;
+	if_config10 = 1;
+
+        if (of_property_read_u32_index(node, "audclk-gpio", 0, &pin_audclk))
+        {
+            if_config1 = 0;
+            printk("audclk-gpio get pin fail!!!\n");
+        }
+        if (of_property_read_u32_index(node, "audclk-gpio", 1, &pin_mode_audclk))
+        {
+            if_config1 = 0;
+            printk("audclk-gpio get pin_mode fail!!!\n");
+        }
+
+        if (of_property_read_u32_index(node, "audmiso-gpio", 0, &pin_audmiso))
+        {
+            if_config2 = 0;
+            printk("audmiso-gpio get pin fail!!!\n");
+        }
+        if (of_property_read_u32_index(node, "audmiso-gpio", 1, &pin_mode_audmiso))
+        {
+            if_config2 = 0;
+            printk("audmiso-gpio get pin_mode fail!!!\n");
+        }
+
+        if (of_property_read_u32_index(node, "audmosi-gpio", 0, &pin_audmosi))
+        {
+            if_config3 = 0;
+            printk("audmosi-gpio get pin fail!!!\n");
+        }
+        if (of_property_read_u32_index(node, "audmosi-gpio", 1, &pin_mode_audmosi))
+        {
+            if_config3 = 0;
+            printk("audmosi-gpio get pin_mode fail!!!\n");
+        }
+
+        if (of_property_read_u32_index(node, "vowclk-gpio", 0, &pin_vowclk))
+        {
+            if_config4 = 0;
+            printk("vowclk-gpio get pin fail!!!\n");
+        }
+        if (of_property_read_u32_index(node, "vowclk-gpio", 1, &pin_mode_vowclk))
+        {
+            if_config4 = 0;
+            printk("vowclk-gpio get pin_mode fail!!!\n");
+        }
+
+        if (of_property_read_u32_index(node, "extspkamp-gpio", 0, &pin_extspkamp))
+        {
+            if_config5 = 0;
+            printk("extspkamp-gpio get pin fail!!!\n");
+        }
+        if (of_property_read_u32_index(node, "extspkamp-gpio", 1, &pin_mode_extspkamp))
+        {
+            if_config5 = 0;
+            printk("extspkamp-gpio get pin_mode fail!!!\n");
+        }
+
+        if (of_property_read_u32_index(node, "i2s1clk-gpio", 0, &pin_i2s1clk))
+        {
+            if_config6 = 0;
+            printk("i2s1clk-gpio get pin fail!!!\n");
+        }
+        if (of_property_read_u32_index(node, "i2s1clk-gpio", 1, &pin_mode_i2s1clk))
+        {
+            if_config6 = 0;
+            printk("i2s1clk-gpio get pin_mode fail!!!\n");
+        }
+
+        if (of_property_read_u32_index(node, "i2s1dat-gpio", 0, &pin_i2s1dat))
+        {
+            if_config7 = 0;
+            printk("i2s1dat-gpio get pin fail!!!\n");
+        }
+        if (of_property_read_u32_index(node, "i2s1dat-gpio", 1, &pin_mode_i2s1dat))
+        {
+            if_config7 = 0;
+            printk("i2s1dat-gpio get pin_mode fail!!!\n");
+        }
+
+        if (of_property_read_u32_index(node, "i2s1mclk-gpio", 0, &pin_i2s1mclk))
+        {
+            if_config8 = 0;
+            printk("i2s1mclk-gpio get pin fail!!!\n");
+        }
+        if (of_property_read_u32_index(node, "i2s1mclk-gpio", 1, &pin_mode_i2s1mclk))
+        {
+            if_config8 = 0;
+            printk("i2s1mclk-gpio get pin_mode fail!!!\n");
+        }
+
+        if (of_property_read_u32_index(node, "i2s1ws-gpio", 0, &pin_i2s1ws))
+        {
+            if_config9 = 0;
+            printk("i2s1ws-gpio get pin fail!!!\n");
+        }
+        if (of_property_read_u32_index(node, "i2s1ws-gpio", 1, &pin_mode_i2s1ws))
+        {
+            if_config9 = 0;
+            printk("i2s1ws-gpio get pin_mode fail!!!\n");
+        }
+
+        if (of_property_read_u32_index(node, "extspkamp_2-gpio", 0, &pin_extspkamp_2))
+        {
+            if_config10 = 0;
+            printk("extspkamp_2-gpio get pin fail!!!\n");
+        }
+        if (of_property_read_u32_index(node, "extspkamp_2-gpio", 1, &pin_mode_extspkamp_2))
+        {
+            if_config10 = 0;
+            printk("extspkamp_2-gpio get pin_mode fail!!!\n");
+        }
+
+        printk("Auddrv_OF_ParseGPIO pin_audclk=%d, pin_audmiso=%d, pin_audmosi=%d \n", pin_audclk, pin_audmiso, pin_audmosi);
+        printk("Auddrv_OF_ParseGPIO pin_vowclk=%d, pin_extspkamp=%d \n", pin_vowclk, pin_extspkamp);
+        printk("Auddrv_OF_ParseGPIO pin_i2s1clk=%d, pin_i2s1dat=%d, pin_i2s1mclk=%d, pin_i2s1ws=%d \n", pin_i2s1clk, pin_i2s1dat, pin_i2s1mclk, pin_i2s1ws);
+    }
+    else
+    {
+        printk("Auddrv_OF_ParseGPIO node NULL!!!\n");
+        return -1;
+    }
+    return 0;
+}
+EXPORT_SYMBOL(Auddrv_OF_ParseGPIO);
+
+int GetGPIO_Info(int type, int *pin, int *pinmode)
+{
+    switch (type)
+    {
+        case 1: //pin_audclk
+            if (if_config1 == 1)
+            {
+                *pin = pin_audclk | 0x80000000;
+                *pinmode = pin_mode_audclk;
+            }
+            else
+            {
+                printk("GetGPIO_Info type %d fail!!!\n", type);
+                *pin = -1;
+                *pinmode = -1;
+            }
+            break;
+
+        case 2: //pin_audmiso
+            if (if_config2 == 1)
+            {
+                *pin = pin_audmiso | 0x80000000;
+                *pinmode = pin_mode_audmiso;
+            }
+            else
+            {
+                printk("GetGPIO_Info type %d fail!!!\n", type);
+                *pin = -1;
+                *pinmode = -1;
+            }
+            break;
+
+        case 3: //pin_audmosi
+            if (if_config3 == 1)
+            {
+                *pin = pin_audmosi | 0x80000000;
+                *pinmode = pin_mode_audmosi;
+            }
+            else
+            {
+                printk("GetGPIO_Info type %d fail!!!\n", type);
+                *pin = -1;
+                *pinmode = -1;
+            }
+            break;
+
+        case 4: //pin_vowclk
+            if (if_config4 == 1)
+            {
+                *pin = pin_vowclk | 0x80000000;
+                *pinmode = pin_mode_vowclk;
+            }
+            else
+            {
+                printk("GetGPIO_Info type %d fail!!!\n", type);
+                *pin = -1;
+                *pinmode = -1;
+            }
+            break;
+
+        case 5: //pin_extspkamp
+            if (if_config5 == 1)
+            {
+                *pin = pin_extspkamp | 0x80000000;
+                *pinmode = pin_mode_extspkamp;
+            }
+            else
+            {
+                printk("GetGPIO_Info type %d fail!!!\n", type);
+                *pin = -1;
+                *pinmode = -1;
+            }
+            break;
+
+        case 6: //pin_i2s1clk
+            if (if_config6 == 1)
+            {
+                *pin = pin_i2s1clk | 0x80000000;
+                *pinmode = pin_mode_i2s1clk;
+            }
+            else
+            {
+                printk("GetGPIO_Info type %d fail!!!\n", type);
+                *pin = -1;
+                *pinmode = -1;
+            }
+            break;
+
+        case 7: //pin_i2s1dat
+            if (if_config7 == 1)
+            {
+                *pin = pin_i2s1dat | 0x80000000;
+                *pinmode = pin_mode_i2s1dat;
+            }
+            else
+            {
+                printk("GetGPIO_Info type %d fail!!!\n", type);
+                *pin = -1;
+                *pinmode = -1;
+            }
+            break;
+
+        case 8: //pin_i2s1mclk
+            if (if_config8 == 1)
+            {
+                *pin = pin_i2s1mclk | 0x80000000;
+                *pinmode = pin_mode_i2s1mclk;
+            }
+            else
+            {
+                printk("GetGPIO_Info type %d fail!!!\n", type);
+                *pin = -1;
+                *pinmode = -1;
+            }
+            break;
+
+        case 9: //pin_i2s1ws
+            if (if_config9 == 1)
+            {
+                *pin = pin_i2s1ws | 0x80000000;
+                *pinmode = pin_mode_i2s1ws;
+            }
+            else
+            {
+                printk("GetGPIO_Info type %d fail!!!\n", type);
+                *pin = -1;
+                *pinmode = -1;
+            }
+            break;
+
+	case 10: //pin_extspkamp_2
+            if (if_config10 == 1)
+            {
+                *pin = pin_extspkamp_2 | 0x80000000;
+                *pinmode = pin_mode_extspkamp_2;
+            }
+            else
+            {
+                printk("GetGPIO_Info type %d fail!!!\n", type);
+                *pin = -1;
+                *pinmode = -1;
+            }
+            break;
+
+        default:
+            *pin = -1;
+            *pinmode = -1;
+            printk("Auddrv_OF_ParseGPIO invalid type=%d!!!\n", type);
+            break;
+    }
+}
+
+EXPORT_SYMBOL(GetGPIO_Info);
+#endif
+
+
+
 static DEFINE_SPINLOCK(afe_control_lock);
 static DEFINE_SPINLOCK(I2s_Div_lock);
 static DEFINE_SPINLOCK(afe_sram_control_lock);
@@ -298,12 +735,12 @@ bool ConditionEnterSuspend(void)
 }
 
 
-// function get internal mode status.
-bool get_internalmd_status(void)
-{
-    bool ret = (get_voice_bt_status() || get_voice_status());
-    return (mExternalModemStatus == true) ? false : ret;
-}
+/*// function get internal mode status.*/
+/*bool get_internalmd_status(void)*/
+/*{*/
+    /*bool ret = (get_voice_bt_status() || get_voice_status());*/
+    /*return (mExternalModemStatus == true) ? false : ret;*/
+/*}*/
 
 #if 0
 void DumpMemifSubStream(void)
@@ -3887,3 +4324,133 @@ void AudDrv_checkDLISRStatus(void)
 	}
 }
 
+
+EXPORT_SYMBOL(AfeControlMutexLock);
+EXPORT_SYMBOL(AfeControlMutexUnLock);
+EXPORT_SYMBOL(AfeControlSramLock);
+EXPORT_SYMBOL(AfeControlSramUnLock);
+EXPORT_SYMBOL(Align64ByteSize);
+EXPORT_SYMBOL(AudDrv_Allocate_DL1_Buffer);
+EXPORT_SYMBOL(AudDrv_Allocate_mem_Buffer);
+EXPORT_SYMBOL(AudDrv_IRQ_handler);
+EXPORT_SYMBOL(AudDrv_checkDLISRStatus);
+EXPORT_SYMBOL(Auddrv_AWB_Interrupt_Handler);
+EXPORT_SYMBOL(Auddrv_DAI_Interrupt_Handler);
+EXPORT_SYMBOL(Auddrv_DL1_Interrupt_Handler);
+EXPORT_SYMBOL(Auddrv_DL2_Interrupt_Handler);
+EXPORT_SYMBOL(Auddrv_Dl1_Spinlock_lock);
+EXPORT_SYMBOL(Auddrv_Dl1_Spinlock_unlock);
+EXPORT_SYMBOL(Auddrv_Dl2_Spinlock_lock);
+EXPORT_SYMBOL(Auddrv_Dl2_Spinlock_unlock);
+EXPORT_SYMBOL(Auddrv_HDMI_Interrupt_Handler);
+EXPORT_SYMBOL(Auddrv_UL1_Interrupt_Handler);
+EXPORT_SYMBOL(Auddrv_UL1_Spinlock_lock);
+EXPORT_SYMBOL(Auddrv_UL1_Spinlock_unlock);
+EXPORT_SYMBOL(Auddrv_UL2_Interrupt_Handler);
+EXPORT_SYMBOL(BackUp_Audio_Register);
+EXPORT_SYMBOL(CheckMemIfEnable);
+EXPORT_SYMBOL(CheckSize);
+EXPORT_SYMBOL(CleanPreDistortion);
+EXPORT_SYMBOL(ClearMemBlock);
+EXPORT_SYMBOL(ClearSramState);
+EXPORT_SYMBOL(Clear_Mem_CopySize);
+EXPORT_SYMBOL(ConditionEnterSuspend);
+EXPORT_SYMBOL(DecreaseI2SDivCounter);
+EXPORT_SYMBOL(EnableAfe);
+EXPORT_SYMBOL(EnableApll1);
+EXPORT_SYMBOL(EnableApll2);
+EXPORT_SYMBOL(EnableI2SDivPower);
+EXPORT_SYMBOL(EnableSideGenHw);
+EXPORT_SYMBOL(EnableSideToneFilter);
+EXPORT_SYMBOL(FillDatatoDlmemory);
+EXPORT_SYMBOL(GetApllbySampleRate);
+EXPORT_SYMBOL(GetCaptureDramSize);
+EXPORT_SYMBOL(GetCaptureSramSize);
+EXPORT_SYMBOL(GetHDMIApLLSource);
+EXPORT_SYMBOL(GetI2SDacEnable);
+EXPORT_SYMBOL(GetI2SDivCounter);
+EXPORT_SYMBOL(GetI2SGroup);
+EXPORT_SYMBOL(GetMemoryPathEnable);
+EXPORT_SYMBOL(GetMrgI2SEnable);
+EXPORT_SYMBOL(GetPLaybackDramSize);
+EXPORT_SYMBOL(GetPLaybackSramFullSize);
+EXPORT_SYMBOL(GetPLaybackSramPartial);
+EXPORT_SYMBOL(GetSramState);
+EXPORT_SYMBOL(Get_Mem_Buffer);
+EXPORT_SYMBOL(Get_Mem_ControlT);
+EXPORT_SYMBOL(Get_Mem_CopySizeByStream);
+EXPORT_SYMBOL(Get_Mem_MaxCopySize);
+EXPORT_SYMBOL(IncreaseI2SDivCounter);
+EXPORT_SYMBOL(InitAfeControl);
+EXPORT_SYMBOL(OpenAfeDigitaldl1);
+EXPORT_SYMBOL(Register_Aud_Irq);
+EXPORT_SYMBOL(RemoveMemifSubStream);
+EXPORT_SYMBOL(ResetAfeControl);
+EXPORT_SYMBOL(Restore_Audio_Register);
+EXPORT_SYMBOL(SampleRateTransform);
+EXPORT_SYMBOL(Set2ndI2SAdcEnable);
+EXPORT_SYMBOL(Set2ndI2SAdcIn);
+EXPORT_SYMBOL(Set2ndI2SEnable);
+EXPORT_SYMBOL(Set2ndI2SIn);
+EXPORT_SYMBOL(Set2ndI2SInConfig);
+EXPORT_SYMBOL(Set2ndI2SInEnable);
+EXPORT_SYMBOL(Set2ndI2SOut);
+EXPORT_SYMBOL(Set2ndI2SOutAttribute);
+EXPORT_SYMBOL(Set2ndI2SOutEnable);
+EXPORT_SYMBOL(SetCLkBclk);
+EXPORT_SYMBOL(SetCLkMclk);
+EXPORT_SYMBOL(SetChannels);
+EXPORT_SYMBOL(SetConnection);
+EXPORT_SYMBOL(SetDL1BufferwithBuf);
+EXPORT_SYMBOL(SetDLSrc2);
+EXPORT_SYMBOL(SetDaiBt);
+EXPORT_SYMBOL(SetDaiBtEnable);
+EXPORT_SYMBOL(SetExternalModemStatus);
+EXPORT_SYMBOL(SetFMEnableFlag);
+EXPORT_SYMBOL(SetHDMIApLL);
+EXPORT_SYMBOL(SetHDMIBCLK);
+EXPORT_SYMBOL(SetHDMIChannels);
+EXPORT_SYMBOL(SetHDMIConnection);
+EXPORT_SYMBOL(SetHDMIEnable);
+EXPORT_SYMBOL(SetHDMIMCLK);
+EXPORT_SYMBOL(SetHDMIdatalength);
+EXPORT_SYMBOL(SetHDMIsamplerate);
+EXPORT_SYMBOL(SetHighAddr);
+EXPORT_SYMBOL(SetHwDigitalGain);
+EXPORT_SYMBOL(SetHwDigitalGainEnable);
+EXPORT_SYMBOL(SetHwDigitalGainMode);
+EXPORT_SYMBOL(SetI2SASRCConfig);
+EXPORT_SYMBOL(SetI2SASRCEnable);
+EXPORT_SYMBOL(SetI2SAdcEnable);
+EXPORT_SYMBOL(SetI2SAdcIn);
+EXPORT_SYMBOL(SetI2SDacEnable);
+EXPORT_SYMBOL(SetI2SDacOut);
+EXPORT_SYMBOL(SetIrqEnable);
+EXPORT_SYMBOL(SetIrqMcuCounter);
+EXPORT_SYMBOL(SetIrqMcuSampleRate);
+EXPORT_SYMBOL(SetMemDuplicateWrite);
+EXPORT_SYMBOL(SetMemIfFetchFormatPerSample);
+EXPORT_SYMBOL(SetMemifSubStream);
+EXPORT_SYMBOL(SetMemoryPathEnable);
+EXPORT_SYMBOL(SetModemPcmConfig);
+EXPORT_SYMBOL(SetModemPcmEnable);
+EXPORT_SYMBOL(SetMrgI2SEnable);
+EXPORT_SYMBOL(SetSampleRate);
+EXPORT_SYMBOL(SetSideGenSampleRate);
+EXPORT_SYMBOL(SetSramState);
+EXPORT_SYMBOL(SetTDMBckInverse);
+EXPORT_SYMBOL(SetTDMChannelsSdata);
+EXPORT_SYMBOL(SetTDMDatalength);
+EXPORT_SYMBOL(SetTDMEnable);
+EXPORT_SYMBOL(SetTDMI2Smode);
+EXPORT_SYMBOL(SetTDMLrckInverse);
+EXPORT_SYMBOL(SetTDMLrckWidth);
+EXPORT_SYMBOL(SetTDMbckcycle);
+EXPORT_SYMBOL(SetVOWStatus);
+EXPORT_SYMBOL(Set_Mem_CopySizeByStream);
+EXPORT_SYMBOL(SetckSel);
+EXPORT_SYMBOL(SetoutputConnectionFormat);
+EXPORT_SYMBOL(checkDllinkMEMIfStatus);
+EXPORT_SYMBOL(checkUplinkMEMIfStatus);
+
+MODULE_LICENSE("GPL");

@@ -480,5 +480,3 @@ module_exit(mtk_mrgrx_soc_platform_exit);
 
 MODULE_DESCRIPTION("mrgrx module platform driver");
 MODULE_LICENSE("GPL");
-
-

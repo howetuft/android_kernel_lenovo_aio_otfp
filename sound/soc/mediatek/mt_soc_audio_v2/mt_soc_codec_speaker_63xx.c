@@ -199,4 +199,4 @@ bool GetSpeakerOcFlag(void)
     return (DmodeFlag | ABmodeFlag);
 }
 
-
+MODULE_LICENSE("GPL");

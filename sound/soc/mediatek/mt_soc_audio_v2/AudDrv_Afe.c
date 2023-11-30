@@ -417,15 +417,32 @@ void Afe_Log_Print(void)
 
 
 // export symbols for other module using
-EXPORT_SYMBOL(Afe_Set_Reg);
 EXPORT_SYMBOL(Afe_Get_Reg);
-
-EXPORT_SYMBOL(GetClkCfg);
-EXPORT_SYMBOL(SetClkCfg);
-
-EXPORT_SYMBOL(GetInfraCfg);
-EXPORT_SYMBOL(SetInfraCfg);
-
 EXPORT_SYMBOL(Afe_Log_Print);
+EXPORT_SYMBOL(Afe_Set_Reg);
+EXPORT_SYMBOL(Auddrv_Reg_map);
+EXPORT_SYMBOL(CheckOffset);
+EXPORT_SYMBOL(GetClkCfg);
+EXPORT_SYMBOL(GetInfraCfg);
+EXPORT_SYMBOL(Get_Afe_Infra_Pointer);
+EXPORT_SYMBOL(Get_Afe_Powertop_Pointer);
+EXPORT_SYMBOL(Get_Afe_SramBase_Pointer);
+EXPORT_SYMBOL(Get_Afe_SramCaptureBase_Pointer);
+EXPORT_SYMBOL(Get_Afe_Sram_Capture_Phys_Addr);
+EXPORT_SYMBOL(Get_Afe_Sram_Phys_Addr);
+EXPORT_SYMBOL(Get_AudClk_Pointer);
+EXPORT_SYMBOL(GetpllCfg);
+EXPORT_SYMBOL(SetClkCfg);
+EXPORT_SYMBOL(SetInfraCfg);
+EXPORT_SYMBOL(SetpllCfg);
 
 
+EXPORT_SYMBOL(AFE_BASE_ADDRESS);
+EXPORT_SYMBOL(AFE_CLK_ADDRESS);
+EXPORT_SYMBOL(AFE_INFRA_ADDRESS);
+EXPORT_SYMBOL(AFE_SRAM_ADDRESS);
+EXPORT_SYMBOL(AFE_TOP_ADDRESS);
+EXPORT_SYMBOL(APLL_BASE_ADDRESS);
+EXPORT_SYMBOL(SramCaptureOffSet);
+
+MODULE_LICENSE("GPL");

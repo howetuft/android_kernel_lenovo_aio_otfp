@@ -5724,3 +5724,5 @@ MODULE_AUTHOR("James Lo");
 MODULE_DESCRIPTION("MT PMIC Device Driver");
 MODULE_LICENSE("GPL");
 
+EXPORT_SYMBOL(pmic_config_interface);
+EXPORT_SYMBOL(pmic_read_interface);

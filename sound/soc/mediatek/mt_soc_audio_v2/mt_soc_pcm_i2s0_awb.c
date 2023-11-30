@@ -654,5 +654,3 @@ module_exit(mtk_soc_i2s0_awb_platform_exit);
 
 MODULE_DESCRIPTION("I2S0 AWB module platform driver");
 MODULE_LICENSE("GPL");
-
-

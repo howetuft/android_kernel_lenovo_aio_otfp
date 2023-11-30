@@ -221,5 +221,4 @@ module_exit(mtk_routing_exit);
 
 /* Module information */
 MODULE_DESCRIPTION("MTK Routing driver");
-MODULE_LICENSE("GPL v2");
-
+MODULE_LICENSE("GPL");

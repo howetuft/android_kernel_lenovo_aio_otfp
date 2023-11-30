@@ -504,5 +504,3 @@ module_exit(mtk_fm_i2s_soc_platform_exit);
 
 MODULE_DESCRIPTION("fm_i2s module platform driver");
 MODULE_LICENSE("GPL");
-
-

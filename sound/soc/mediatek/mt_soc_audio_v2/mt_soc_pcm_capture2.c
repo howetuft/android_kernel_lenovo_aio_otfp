@@ -674,5 +674,3 @@ module_exit(mtk_soc_capture2_platform_exit);
 
 MODULE_DESCRIPTION("AFE Capture2 module platform driver");
 MODULE_LICENSE("GPL");
-
-

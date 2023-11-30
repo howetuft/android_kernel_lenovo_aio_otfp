@@ -390,4 +390,4 @@ bool SetConnectionState(uint32 ConnectionState, uint32 Input, uint32 Output)
 
 EXPORT_SYMBOL(SetConnectionState);
 
-
+MODULE_LICENSE("GPL");
