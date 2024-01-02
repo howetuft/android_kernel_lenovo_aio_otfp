@@ -917,11 +917,30 @@ static const struct snd_kcontrol_new mt_soc_controls[] =
     SOC_ENUM_EXT("I2S low Jitter fucntion", mt_soc_machine_enum[0], mt6595_get_lowjitter, mt6595_set_lowjitter),
 };
 
+/* howetuft */
+static const struct snd_soc_dapm_widget mt_soc_widgets[] = {
+	SND_SOC_DAPM_SPK("Speaker", NULL),
+	SND_SOC_DAPM_MIC("Int Mic", NULL),
+	SND_SOC_DAPM_HP("Headphone", NULL),
+	SND_SOC_DAPM_MIC("Headset Mic", NULL),
+};
+
+static const struct snd_soc_dapm_route mt_soc_routes[] = {
+	{"Speaker", NULL, "SPEAKER"},
+	{"Headphone", NULL, "HEADSET"},
+	{"Headphone", NULL, "EARPIECE"},
+};
+/* howetuft */
+
 static struct snd_soc_card snd_soc_card_mt =
 {
     .name       = "mt-snd-card",
     .dai_link   = mt_soc_dai_common,
     .num_links  = ARRAY_SIZE(mt_soc_dai_common),
+    .dapm_widgets = mt_soc_widgets,
+    .num_dapm_widgets = ARRAY_SIZE(mt_soc_widgets),
+    .dapm_routes = mt_soc_routes,
+    .num_dapm_routes = ARRAY_SIZE(mt_soc_routes),
     .controls = mt_soc_controls,
     .num_controls = ARRAY_SIZE(mt_soc_controls),
 };
@@ -959,6 +978,14 @@ static int __init mt_soc_snd_init(void)
     // create analog debug file
     mt_sco_audio_debugfs = debugfs_create_file(DEBUG_ANA_FS_NAME,
                                                S_IFREG | S_IRUGO, NULL, (void *) DEBUG_ANA_FS_NAME, &mtaudio_ana_debug_ops);
+
+    /* howetuft */
+    ret = snd_soc_register_card(card);
+    if (ret != 0)
+    {
+        printk("mt_soc_snd_init goto put_device - snd_soc_register_card fail\n");
+        goto put_device;
+    }
 
     return 0;
 put_device:
