@@ -58,6 +58,7 @@
 #include <sound/pcm.h>
 #include <sound/soc.h>
 #include <mach/mt_gpio.h>
+#include <sound/soc-dapm.h>
 
 #include "AudDrv_Common.h"
 #include "AudDrv_Def.h"
@@ -2459,7 +2460,7 @@ static const struct snd_kcontrol_new mt6331_snd_controls[] =
 
 static const struct snd_kcontrol_new mt6331_Voice_Switch[] =
 {
-    //SOC_DAPM_ENUM_EXT("Voice Mux", Audio_DL_Enum[10], Voice_Mux_Get, Voice_Mux_Set),
+    /*SOC_DAPM_ENUM_EXT("Voice Mux", Audio_DL_Enum[10], Voice_Mux_Get, Voice_Mux_Set),*/
 };
 
 void SetMicPGAGain(void)
@@ -4820,17 +4821,25 @@ static const struct snd_kcontrol_new mt6331_UL_Codec_controls[] =
     SOC_SINGLE_EXT("Audio_VOW_State", SND_SOC_NOPM, 0, 0x80000, 0, Audio_Vow_State_Get, Audio_Vow_State_Set),
 };
 
+// TODO
+
+int codec_enable_rx_bias(void)
+{
+  return 0;
+};
+
+
 static const struct snd_soc_dapm_widget mt6331_dapm_widgets[] =
 {
     /* Outputs */
     SND_SOC_DAPM_OUTPUT("EARPIECE"),
     SND_SOC_DAPM_OUTPUT("HEADSET"),
     SND_SOC_DAPM_OUTPUT("SPEAKER"),
-    /*
-    SND_SOC_DAPM_MUX_E("VOICE_Mux_E", SND_SOC_NOPM, 0, 0  , &mt6331_Voice_Switch, codec_enable_rx_bias,
-    SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU | SND_SOC_DAPM_PRE_PMD | SND_SOC_DAPM_POST_PMD |
-    SND_SOC_DAPM_PRE_REG | SND_SOC_DAPM_POST_REG),
-    */
+    SND_SOC_DAPM_OUTPUT("SPEAKER PGA"),
+    SND_SOC_DAPM_MUX("VOICE_Mux_E", SND_SOC_NOPM, 0, 0  , &mt6331_Voice_Switch),
+    /*SND_SOC_DAPM_MUX_E("VOICE_Mux_E", SND_SOC_NOPM, 0, 0  , &mt6331_Voice_Switch, codec_enable_rx_bias,*/
+    /*SND_SOC_DAPM_PRE_PMU | SND_SOC_DAPM_POST_PMU | SND_SOC_DAPM_PRE_PMD | SND_SOC_DAPM_POST_PMD |*/
+    /*SND_SOC_DAPM_PRE_REG | SND_SOC_DAPM_POST_REG),*/
 
 };
 
