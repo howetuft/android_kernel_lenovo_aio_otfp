@@ -1153,7 +1153,7 @@
 		};
 
 		MT_SOC_HP_IMPEDANCE_PCM@0x11220000 {
-			compatible = "mediatek,Mt_soc_pcm_hp_impedance";
+			compatible = "mediatek,mt_soc_pcm_hp_impedance";
 		};
 
 		MT_SOC_CODEC_NAME@0x11220000 {
