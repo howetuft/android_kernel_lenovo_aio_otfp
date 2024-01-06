@@ -30,6 +30,27 @@
 
 #include "mt_soc_pcm_common.h"
 
+/* Conventional and unconventional sample rate supported */
+const unsigned int soc_fm_supported_sample_rates[] =
+{
+    32000,44100,48000
+};
+
+const unsigned int soc_voice_supported_sample_rates[] =
+{
+    8000,16000,32000
+};
+
+const unsigned int soc_normal_supported_sample_rates[] =
+{
+    8000, 11025, 12000, 16000, 22050, 24000, 32000,44100,48000
+};
+
+const unsigned int soc_high_supported_sample_rates[] =
+{
+    8000, 11025, 12000, 16000, 22050, 24000, 32000,44100,48000,88200,96000,176400,192000
+};
+
 unsigned long audio_frame_to_bytes(struct snd_pcm_substream *substream,unsigned long count)
 {
     unsigned long bytes = count;
