@@ -68,6 +68,8 @@
 #include <cust_battery_meter.h>
 #include <linux/dma-mapping.h>
 
+#define MT6328_AUX_CH9 AUX_HP_AP
+
 static AFE_MEM_CONTROL_T *pHp_impedance_MemControl;
 /* static const int DCoffsetDefault = 1500;  //95: 1622 */
 static const int DCoffsetDefault = 1460;  /* denali: 1460 */

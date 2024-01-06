@@ -410,7 +410,7 @@ static int Audio_HP_ImpeDance_Set(struct snd_kcontrol *kcontrol,
             Sramdata += 4;
             printk("Sramdata = %p \n", Sramdata);
             printk("Sramdata = 0x%x Sramdata+1 = 0x%x Sramdata+2 = 0x%x Sramdata+3 = 0x%x\n", *Sramdata, *(Sramdata + 1), *(Sramdata + 2), *(Sramdata + 3));
-            //memset((void *)Get_Afe_SramBase_Pointer(), ucontrol->value.integer.value[0], AFE_INTERNAL_SRAM_SIZE);
+            memset((void *)Get_Afe_SramBase_Pointer(), ucontrol->value.integer.value[0], AFE_INTERNAL_SRAM_SIZE);
             msleep(20);
             dcoffset = 0;
             #ifdef CONFIG_MTK_FPGA
@@ -419,7 +419,7 @@ static int Audio_HP_ImpeDance_Set(struct snd_kcontrol *kcontrol,
             dcoffset = 0;
             #endif
             printk("dcoffset= %d \n", dcoffset);
-            msleep(3 * 1000);
+            //msleep(3 * 1000);
         }
     }
 
