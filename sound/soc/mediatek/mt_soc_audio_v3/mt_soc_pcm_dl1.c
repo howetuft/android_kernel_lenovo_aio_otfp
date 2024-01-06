@@ -699,9 +699,11 @@ u32 afe_irq_number = 0;
 int AFE_BASE_PHY;
 
 static const struct of_device_id mt_soc_pcm_dl1_of_ids[] = {
-	{.compatible = "mediatek,mt-soc-dl1-pcm",},
+	{.compatible = "mediatek,mt_soc_pcm_dl1",},
 	{}
 };
+
+/*MODULE_DEVICE_TABLE(of, mt_soc_pcm_dl1_of_ids);*/
 
 static int Auddrv_Reg_map_new(void *dev)
 {
@@ -1110,8 +1112,10 @@ static int __init mtk_soc_platform_init(void)
 
 	soc_mtkafe_dev = platform_device_alloc(MT_SOC_DL1_PCM, -1);
 
-	if (!soc_mtkafe_dev)
+	if (!soc_mtkafe_dev) {
+	        PRINTK_AUDDRV("%s - platform_device_alloc failed\n", __func__);
 		return -ENOMEM;
+        }
 
 
 	ret = platform_device_add(soc_mtkafe_dev);
