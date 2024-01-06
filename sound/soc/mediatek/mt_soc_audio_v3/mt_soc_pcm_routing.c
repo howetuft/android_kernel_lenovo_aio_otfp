@@ -642,7 +642,8 @@ static void GetAudioTrimOffset(int channels)
 	EnableTrimbuffer(true);
 	/*msleep(1);*/
 	usleep_range(1*1000, 20*1000);
-	Buffer_offl_value = PMIC_IMM_GetOneChannelValue(MT6328_AUX_CH9, off_counter, 0);
+	/*Buffer_offl_value = PMIC_IMM_GetOneChannelValue(MT6328_AUX_CH9, off_counter, 0);*/
+	Buffer_offl_value = PMIC_IMM_GetOneChannelValue(AUX_HP_AP, off_counter, 0);
 	pr_warn("Buffer_offl_value = %d\n", Buffer_offl_value);
 	EnableTrimbuffer(false);
 
@@ -653,7 +654,8 @@ static void GetAudioTrimOffset(int channels)
 	EnableTrimbuffer(true);
 	/*msleep(1);*/
 	usleep_range(1*1000, 20*1000);
-	Buffer_offr_value = PMIC_IMM_GetOneChannelValue(MT6328_AUX_CH9, off_counter, 0);
+	/*Buffer_offr_value = PMIC_IMM_GetOneChannelValue(MT6328_AUX_CH9, off_counter, 0);*/
+	Buffer_offr_value = PMIC_IMM_GetOneChannelValue(AUX_HP_AP, off_counter, 0);
 	pr_warn("Buffer_offr_value = %d\n", Buffer_offr_value);
 	EnableTrimbuffer(false);
 
@@ -688,7 +690,8 @@ static void GetAudioTrimOffset(int channels)
 
 	/*msleep(10);*/
 	usleep_range(10*1000, 20*1000);
-	Buffer_on_value = PMIC_IMM_GetOneChannelValue(MT6328_AUX_CH9, on_counter, 0);
+	/*Buffer_on_value = PMIC_IMM_GetOneChannelValue(MT6328_AUX_CH9, on_counter, 0);*/
+	Buffer_on_value = PMIC_IMM_GetOneChannelValue(AUX_HP_AP, on_counter, 0);
 
 	mHplOffset = Buffer_on_value - Buffer_offl_value + Const_DC_OFFSET;
 	pr_warn("Buffer_on_value = %d Buffer_offl_value = %d mHplOffset = %d\n",
@@ -702,7 +705,8 @@ static void GetAudioTrimOffset(int channels)
 	EnableTrimbuffer(true);
 	/*msleep(1);	*/
 	usleep_range(10*1000, 20*1000);
-	Buffer_on_value = PMIC_IMM_GetOneChannelValue(MT6328_AUX_CH9, on_counter, 0);
+	/*Buffer_on_value = PMIC_IMM_GetOneChannelValue(MT6328_AUX_CH9, on_counter, 0);*/
+	Buffer_on_value = PMIC_IMM_GetOneChannelValue(AUX_HP_AP, on_counter, 0);
 	mHprOffset = Buffer_on_value - Buffer_offr_value + Const_DC_OFFSET;
 	pr_warn("Buffer_on_value = %d Buffer_offr_value = %d mHprOffset = %d\n",
 	       Buffer_on_value, Buffer_offr_value, mHprOffset);
