@@ -258,11 +258,15 @@ void AudDrv_Clk_On(void)
 		if (enable_clock(MT_CG_AUDIO_AFE, "AUDIO"))
 			PRINTK_AUD_CLK("%s Aud enable_clock MT_CG_AUDIO_AFE fail", __func__);
 
+                #if 0  /* howetuft: from mt_soc_audio_8163 */
 		if (enable_clock(MT_CG_AUDIO_DAC, "AUDIO"))
 			PRINTK_AUD_CLK("%s MT_CG_AUDIO_DAC fail", __func__);
 
 		if (enable_clock(MT_CG_AUDIO_DAC_PREDIS, "AUDIO"))
 			PRINTK_AUD_CLK("%s MT_CG_AUDIO_DAC_PREDIS fail", __func__);
+                #else
+                Afe_Set_Reg(AUDIO_TOP_CON0, 0, 0x06000000);
+                #endif
 
 #else
 		pr_warn("-----------[CCF]AudDrv_Clk_On, aud_infra_clk:%d\n",
@@ -359,12 +363,15 @@ void AudDrv_Clk_Off(void)
 			if (disable_clock(MT_CG_AUDIO_AFE, "AUDIO"))
 				PRINTK_AUD_CLK("%s disable_clock MT_CG_AUDIO_AFE fail", __func__);
 
+                        #if 0  /* Howetuft */
 			if (disable_clock(MT_CG_AUDIO_DAC, "AUDIO"))
 				PRINTK_AUD_CLK("%s MT_CG_AUDIO_DAC fail", __func__);
 
 			if (disable_clock(MT_CG_AUDIO_DAC_PREDIS, "AUDIO"))
 				PRINTK_AUD_CLK("%s MT_CG_AUDIO_DAC_PREDIS fail", __func__);
-
+                        #else
+                        Afe_Set_Reg(AUDIO_TOP_CON0, 0x06000000, 0x06000000);
+                        #endif
 			if (disable_clock(MT_CG_INFRA_AUDIO, "AUDIO"))
 				PRINTK_AUD_CLK("%s disable_clock MT_CG_INFRA_AUDIO fail", __func__);
 
@@ -473,9 +480,15 @@ void AudDrv_ADC_Clk_On(void)
 		/* Afe_Set_Reg(AUDIO_TOP_CON0, 0 << 24 , 1 << 24); */
 #ifdef PM_MANAGER_API
 #if defined(CONFIG_MTK_LEGACY)
-		if (enable_clock(MT_CG_AUDIO_ADC, "AUDIO"))
-			PRINTK_AUD_CLK("%s fail", __func__);
-
+                /* Howetuft */
+        #if 0 //Todo now clock mgr is not ready, directly set register
+        if (enable_clock(MT_CG_AUDIO_ADC, "AUDIO"))
+        {
+            PRINTK_AUD_CLK("%s fail", __func__);
+        }
+        #else
+        Afe_Set_Reg(AUDIO_TOP_CON0, 0 << 24 , 1 << 24);
+        #endif
 #else
 		if (aud_clks[CLOCK_ADC].clk_prepare) {
 			ret = clk_enable(aud_clks[CLOCK_ADC].clock);
@@ -510,10 +523,15 @@ void AudDrv_ADC_Clk_Off(void)
 		/* Afe_Set_Reg(AUDIO_TOP_CON0, 1 << 24 , 1 << 24); */
 #ifdef PM_MANAGER_API
 #if defined(CONFIG_MTK_LEGACY)
-
-		if (disable_clock(MT_CG_AUDIO_ADC, "AUDIO"))
-			PRINTK_AUD_CLK("%s fail", __func__);
-
+                /* Howetuft */
+        #if 0 //Todo now clock mgr is not ready, directly set register
+        if (disable_clock(MT_CG_AUDIO_ADC, "AUDIO"))
+        {
+            PRINTK_AUD_CLK("%s fail", __func__);
+        }
+        #else
+        Afe_Set_Reg(AUDIO_TOP_CON0, 1 << 24 , 1 << 24);
+        #endif
 #else
 		if (aud_clks[CLOCK_ADC].clk_prepare)
 			clk_disable(aud_clks[CLOCK_ADC].clock);
