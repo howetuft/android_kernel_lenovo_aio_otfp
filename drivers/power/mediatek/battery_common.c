@@ -725,11 +725,11 @@ static struct battery_data battery_main = {
 };
 
 
+int g_thermal_limit_current_level = 0;
 #if !defined(CONFIG_POWER_EXT)
 
 /*Lenovo-sw: AIOROW-4398 thermal limit current*/
 //level:0 -normal, 1,2,3 current max to low three level
-int g_thermal_limit_current_level = 0;
 extern void thermal_pchr_turn_on_charging(void);
 static ssize_t show_thermal_limit_current(struct device *dev, struct device_attribute *attr,
                                         char *buf)
